@@ -16,7 +16,6 @@
 ## Building a testing application
 1. Run `npm run make`
   - The builds will be created in the out folder
-    - See folder locations
 
 ## Port Busy issue/solution
 ```
