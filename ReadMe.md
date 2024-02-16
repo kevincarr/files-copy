@@ -20,7 +20,7 @@
 
 ## Port Busy issue/solution
 ```
-[doc](https://urldefense.com/v3/__https://js.electronforge.io/plugin/webpack/interfaces/webpackpluginconfig__;!!BBM_p3AAtQ!PF4kHC9a1dzqiNApB99LZA-Jo-mdKpR3Jb4o7OOKeIQCXdYA4IPwvqwE6cawOmWn6lj3qOMj8oVAl80JQjEtudc$)
+[doc](https://js.electronforge.io/plugin/webpack/interfaces/webpackpluginconfig__;!!BBM_p3AAtQ!PF4kHC9a1dzqiNApB99LZA-Jo-mdKpR3Jb4o7OOKeIQCXdYA4IPwvqwE6cawOmWn6lj3qOMj8oVAl80JQjEtudc$)
 
 The devServer.port is probably overwritten by electron-forge, and the values for the config are set in forge.config.js:
 {
