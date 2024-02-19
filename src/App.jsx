@@ -1,12 +1,15 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 function App() {
-  const [paths, setpaths] = useState([,,false]);
+  const [paths, setpaths] = useState([,,null]);
+  const pathRef = useRef();
+  pathRef.current = paths;
 
-  const returnPaths= async function() {  
-    setpaths(await window.electron.folderPathsGet());
-    console.log( "***** paths[2]="+paths[2]);
+  const returnPaths= async function() {
+    const result=await window.electron.folderPathsGet();
+    setpaths(result);
+    console.log( "***** pathRef.current[2]="+pathRef.current[2]);
   }
   const dirPathGet= async function() {  
     const result=await window.electron.directorySelect();
@@ -32,7 +35,7 @@ function App() {
       </div>
       <div className="float-left">
         <div className="browse-container flex-container">
-          <div id="location" className="result">{paths[1]}</div>
+          <div id="location" className="result">{pathRef.current[1]}</div>
           <div className="button" onClick={()=>dirPathGet()} >Browse</div>
         </div>
       </div>

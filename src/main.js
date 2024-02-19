@@ -67,12 +67,23 @@ app.on('activate', () => {
 ipcMain.handle("folderPathsGet", () => {
   const homeDir = app.getPath('home');
   const desktopDir = path.resolve(homeDir, 'Desktop');
+  let myOpenPath = desktopDir;
   let isInstalled=false;
-  if (existsSync(path.resolve(desktopDir, 'etmr-optimizer'))) {
-    isInstalled=true;
+  if (existsSync(path.resolve(myOpenPath, 'etmr-optimizer'))) {
+    myOpenPath=path.resolve(myOpenPath, 'etmr-optimizer');
+    if (existsSync(path.resolve(myOpenPath, 'assets'))) {
+      myOpenPath=path.resolve(myOpenPath, 'assets');
+      if (existsSync(path.resolve(myOpenPath, 'Workday'))) {
+        isInstalled=true;
+      }
+    }
   }
-  return([__dirname,desktopDir,isInstalled]);
+  myOpenPath=path.resolve(desktopDir, 'etmr-optimizer')
+
+  return([__dirname,myOpenPath,isInstalled]);
 });
+
+
 
 ipcMain.handle('directorySelect', async () => {
   let isInstalled=false;
