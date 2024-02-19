@@ -4,5 +4,5 @@ import { contextBridge, ipcRenderer } from "electron";
 
 contextBridge.exposeInMainWorld("electron", {
     folderPathsGet: () => ipcRenderer.invoke("folderPathsGet"),
-    directorySelect: () => ipcRenderer.invoke("directorySelect"),
+    directorySelect: (pathArray) => ipcRenderer.invoke("directorySelect",pathArray),
 });

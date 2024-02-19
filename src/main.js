@@ -79,58 +79,36 @@ ipcMain.handle("folderPathsGet", () => {
     }
   }
   myOpenPath=path.resolve(desktopDir, 'etmr-optimizer')
-
   return([__dirname,myOpenPath,isInstalled]);
 });
 
-
-
-ipcMain.handle('directorySelect', async () => {
-  let isInstalled=false;
+ipcMain.handle('directorySelect', async (pathArray) => {
   const homeDir = app.getPath('home');
-  let myOpenPath = path.resolve(homeDir, 'Desktop');
-  //let myTestPath=path.resolve(desktopDir, 'etmr-optimizer');
-  if (existsSync(path.resolve(myOpenPath, 'etmr-optimizer'))) {
-    myOpenPath = path.resolve(myOpenPath, 'etmr-optimizer');
-  }
-
-
-
+  const desktopDir = path.resolve(homeDir, 'Desktop');
+  let myOpenPath=pathArray[2]?pathArray[1]:desktopDir;
   const result = await dialog.showOpenDialog(null, {
     defaultPath:myOpenPath,
     properties: ['openDirectory']
-})
-if (result.canceled) {
+  })
+  if (result.canceled) {
     return null
-} else {
-/*
-    const dir = result.filePaths[0];
-    // check if ETMR is already installed
-    const dirArray=dir.split("/");
-    let myTestPath=path.resolve(dir, 'assets');
-    myTestPath=path.resolve(dir, 'Workday');
-    if(dirArray[dirArray.length-1]==="assets"){
-
+  } else {
+    myOpenPath = result.filePaths[0];
+    let isInstalled=false;
+    if(myOpenPath.substr(myOpenPath.length - 14)==='etmr-optimizer'){
+      myOpenPath = myOpenPath.slice(0, -14);
     }
-    if (existsSync(path.resolve(dir, 'etmr-optimizer'))) {
-      isInstalled=true;
+    let myOpenPathTest=myOpenPath;
+    if (existsSync(path.resolve(myOpenPathTest, 'etmr-optimizer'))) {
+      myOpenPathTest=path.resolve(myOpenPathTest, 'etmr-optimizer');
+      if (existsSync(path.resolve(myOpenPathTest, 'assets'))) {
+        myOpenPathTest=path.resolve(myOpenPathTest, 'assets');
+        if (existsSync(path.resolve(myOpenPathTest, 'Workday'))) {
+          isInstalled=true;
+        }
+      }
     }
-*/ 
+    myOpenPath = path.resolve(myOpenPath, 'etmr-optimizer')
     return([__dirname,myOpenPath,isInstalled]);
-}
-
-/*
-  const result = await dialog.showOpenDialog({
-    title: 'Choose Location',
-    defaultPath: path.join(desktopDir, '/etmr-optimizer'),
-    properties: ['openDirectory']
-  });
-
-  console.log('directories selected=', result);
-  /*
-  if (existsSync(path.resolve(result.filePaths, 'etmr-optimizer'))) {
-    isInstalled=true;
   }
-  return([__dirname,result.filePaths,isInstalled]);
-  */
 });
