@@ -1,6 +1,6 @@
 {
-  "name": "installer",
-  "productName": "installer",
+  "name": "update-install",
+  "productName": "Update/Install",
   "version": "1.0.0",
   "description": "Copy current files",
   "main": ".webpack/main",
