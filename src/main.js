@@ -4,6 +4,7 @@ import {
   } from "fs";
 
 const path = require('path');
+const fs = require('fs');
 
 app.commandLine.appendSwitch('--no-sandbox'); // This is to run an shared/mapped drives
 
@@ -78,7 +79,7 @@ ipcMain.handle("folderPathsGet", () => {
       }
     }
   }
-  myOpenPath=path.resolve(desktopDir, 'etmr-optimizer')
+  myOpenPath=path.resolve(desktopDir, 'etmr-optimizer');
   return([__dirname,myOpenPath,isInstalled]);
 });
 
@@ -111,4 +112,20 @@ ipcMain.handle('directorySelect', async (pathArray) => {
     myOpenPath = path.resolve(myOpenPath, 'etmr-optimizer')
     return([__dirname,myOpenPath,isInstalled]);
   }
+});
+
+function copyFolderSync(from, to) {
+  if (!existsSync(to)) {
+    fs.mkdirSync(to);
+  }
+  fs.readdirSync(from).forEach((element) => {
+      if (fs.lstatSync(path.join(from, element)).isFile()) {
+          fs.copyFileSync(path.join(from, element), path.join(to, element));
+      } else {
+          copyFolderSync(path.join(from, element), path.join(to, element));
+      }
+  });
+}
+ipcMain.handle('copyFolderSync', async (event, from, to) => {
+  copyFolderSync(from,to);
 });

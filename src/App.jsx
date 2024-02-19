@@ -6,11 +6,11 @@ function App() {
   const pathRef = useRef();
   pathRef.current = paths;
 
-  const returnPaths= async function() {
+  const returnPaths = async function() {
     const result=await window.electron.folderPathsGet();
     setpaths(result);
   }
-  const dirPathGet= async function() {  
+  const dirPathGet = async function() {  
     const result=await window.electron.directorySelect();
     if(result){
       setpaths(result);
@@ -30,13 +30,34 @@ function App() {
       </>);
     }
   }
+  const updateFiles = async function(){
+    let myTo=pathRef.current[1];
+    let myFrom=pathRef.current[0].split(".webpack")[0];
+    if(myFrom.slice(-1)==="\\"){
+
+      myFrom=myFrom.slice(0, -1);
+    }
+    myFrom=myFrom+"\\files-to-copy";
+
+    if(myTo.slice(-1)==="\\"){
+      myTo=myTo.slice(0, -1);
+    }
+    myTo=myTo+"\\files-to-copy";
+    
+    console.log("***** myFrom="+myFrom);
+    console.log("***** myTo"+myTo);
+    let result=await window.electron.copyFolderSync(myFrom,myTo);
+
+    //const result=await window.electron.copyFolderSync();
+  }
+
   const updateOrInstall=()=>{
     if(pathRef.current[2]){
-      return(<div className="coral-button select-none install-btn">
+      return(<div className="coral-button select-none install-btn" onClick={()=>updateFiles()}>
         Update 
       </div>);
     } else {
-      return(<div className="coral-button select-none install-btn">
+      return(<div className="coral-button select-none install-btn" onClick={()=>updateFiles()}>
         Install 
       </div>);
     }
