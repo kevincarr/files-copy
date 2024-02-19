@@ -3,5 +3,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 
 contextBridge.exposeInMainWorld("electron", {
-    getFolderPaths: () => ipcRenderer.invoke("getFolderPaths"),
+    folderPathsGet: () => ipcRenderer.invoke("folderPathsGet"),
+    directorySelect: () => ipcRenderer.invoke("directorySelect"),
 });

@@ -1,4 +1,8 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import {
+	existsSync,
+  } from "fs";
+
 const path = require('path');
 
 app.commandLine.appendSwitch('--no-sandbox'); // This is to run an shared/mapped drives
@@ -60,8 +64,62 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-ipcMain.handle("getFolderPaths", () => {
+ipcMain.handle("folderPathsGet", () => {
   const homeDir = app.getPath('home');
   const desktopDir = path.resolve(homeDir, 'Desktop');
-  return([__dirname,desktopDir]);
+  let isInstalled=false;
+  if (existsSync(path.resolve(desktopDir, 'etmr-optimizer'))) {
+    isInstalled=true;
+  }
+  return([__dirname,desktopDir,isInstalled]);
+});
+
+ipcMain.handle('directorySelect', async () => {
+  let isInstalled=false;
+  const homeDir = app.getPath('home');
+  let myOpenPath = path.resolve(homeDir, 'Desktop');
+  //let myTestPath=path.resolve(desktopDir, 'etmr-optimizer');
+  if (existsSync(path.resolve(myOpenPath, 'etmr-optimizer'))) {
+    myOpenPath = path.resolve(myOpenPath, 'etmr-optimizer');
+  }
+
+
+
+  const result = await dialog.showOpenDialog(null, {
+    defaultPath:myOpenPath,
+    properties: ['openDirectory']
+})
+if (result.canceled) {
+    return null
+} else {
+/*
+    const dir = result.filePaths[0];
+    // check if ETMR is already installed
+    const dirArray=dir.split("/");
+    let myTestPath=path.resolve(dir, 'assets');
+    myTestPath=path.resolve(dir, 'Workday');
+    if(dirArray[dirArray.length-1]==="assets"){
+
+    }
+    if (existsSync(path.resolve(dir, 'etmr-optimizer'))) {
+      isInstalled=true;
+    }
+*/ 
+    return([__dirname,myOpenPath,isInstalled]);
+}
+
+/*
+  const result = await dialog.showOpenDialog({
+    title: 'Choose Location',
+    defaultPath: path.join(desktopDir, '/etmr-optimizer'),
+    properties: ['openDirectory']
+  });
+
+  console.log('directories selected=', result);
+  /*
+  if (existsSync(path.resolve(result.filePaths, 'etmr-optimizer'))) {
+    isInstalled=true;
+  }
+  return([__dirname,result.filePaths,isInstalled]);
+  */
 });
