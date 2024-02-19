@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+import { app, BrowserWindow, ipcMain } from 'electron';
 const path = require('path');
 
 app.commandLine.appendSwitch('--no-sandbox'); // This is to run an shared/mapped drives
@@ -59,3 +59,9 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+ipcMain.handle("getFolderPaths", () => {
+  const homeDir = app.getPath('home');
+  const desktopDir = path.resolve(homeDir, 'Desktop');
+  return([__dirname,desktopDir]);
+});

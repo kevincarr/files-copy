@@ -72,7 +72,7 @@ body {
 }
 .browse-container .result {
   width: 650px;
-  text-align: right;
+  text-align: left;
   padding-right:10px;
   background: #fff;
   cursor: text;
