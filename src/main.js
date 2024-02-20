@@ -37,7 +37,7 @@ const createWindow = () => {
   } else {
     //mainWindow.setFullScreen(true);
     // REMARK THIS OUT FOR LIVE APPLICATION
-    //mainWindow.webContents.openDevTools({ mode: 'detach' });
+    mainWindow.webContents.openDevTools({ mode: 'detach' });
   }
 };
 

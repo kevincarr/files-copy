@@ -1,12 +1,14 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 
+import packageJson from '../package.json';
+
 function App() {
   const [paths, setpaths] = useState([,,null]);
   const pathRef = useRef();
   pathRef.current = paths;
   
-  const [progress, setProgress] = useState("0");
+  const [progress, setProgress] = useState("0%");
   const progressRef = useRef();
   progressRef.current = progress;
 
@@ -14,7 +16,8 @@ function App() {
     const result=await window.electron.folderPathsGet();
     setpaths(result);
   }
-  const dirPathGet = async function() { 
+  const dirPathGet = async function() {
+    setProgress("0%");
     const browseBtn = document.getElementById("browse-btn");
     if(browseBtn.classList.contains("button")){
       const result=await window.electron.directorySelect();
@@ -80,17 +83,19 @@ function App() {
     return true;
   }
   const filesInstall = async function(event){
+    setProgress("0%");
     event.target.style.display='none';
     const browseBtn = document.getElementById("browse-btn");
     browseBtn.classList.add("disable");
     browseBtn.classList.remove("button");
     let i=0;
     let myTo=pathRef.current[1];
-    let myFrom=pathRef.current[0].split(".webpack")[0];
-    if(myFrom.slice(-1)===PATH_DELIMTER){
-      myFrom=myFrom.slice(0, -1);
-    }
+    console.log("***** pathRef.current[0]="+pathRef.current[0]);
+    console.log("***** pathRef.current[1]="+pathRef.current[1]);
+    let myFrom=pathRef.current[0].split(PATH_DELIMTER+".webpack")[0];
 
+    myFrom=myFrom.split(PATH_DELIMTER+"app-"+packageJson.version)[0];
+    
     myFrom=myFrom+PATH_DELIMTER+"copyFolderSync";
     const myFromRoot=myFrom;
     if(myTo.slice(-1)===PATH_DELIMTER){
@@ -145,15 +150,21 @@ function App() {
     for(i=0; i<items.length;i++){
       myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
       myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
-      console.log("***** myTo="+myTo);
       result=await await window.electron.copyFileSync(myFrom,myTo);
       progressStep(progressCurrent);
     }
 
     // finish up
+    setTimeout(() => {
+      alert("Copying completed successfully.");
+      window.electron.onExit();
+    }, 500);
+  
+    /*
     browseBtn.classList.add("button");
     browseBtn.classList.remove("disable");
     event.target.style.display="block";
+    */
   }
 
   const updateOrInstall=()=>{
