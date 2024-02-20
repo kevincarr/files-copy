@@ -68,13 +68,22 @@ function App() {
 
     //const result=await window.electron.copyFolderSync();
   }
-  
+  const progressStep=(myStep)=>{
+    let progressStep=Number(progressRef.current.split("%")[0]);
+    progressStep=progressStep+myStep;
+    setProgress(progressStep+"%");
+  }
+
+  const folderAdd=async function(myTo){
+    let result=await window.electron.makeFolderSync(myTo);
+    progressStep(1);
+    return true;
+  }
   const filesInstall = async function(event){
     event.target.style.display='none';
     const browseBtn = document.getElementById("browse-btn");
     browseBtn.classList.add("disable");
     browseBtn.classList.remove("button");
-    let progressStep=0;
     let i=0;
     let myTo=pathRef.current[1];
     let myFrom=pathRef.current[0].split(".webpack")[0];
@@ -88,43 +97,63 @@ function App() {
       myTo=myTo.slice(0, -1);
     }
 
+    // Create etmr folder
     const myToRoot=myTo;
-    let result=await window.electron.makeFolderSync(myTo);
-    progressStep++;
-    setProgress(progressStep+"%");
+    let result=await window.electron.makeFolderSync(myToRoot);
+    progressStep(1);
 
+    // copy files in root
     let items = await window.electron.getFilesInFolder(myFrom);
     for(i=0; i<items.length;i++){
       myFrom=myFromRoot+PATH_DELIMTER+items[i];
       myTo=myToRoot+PATH_DELIMTER+items[i];
       result=await await window.electron.copyFileSync(myFrom,myTo);
-      progressStep++;
-      setProgress(progressStep+"%");
+      progressStep(1);
     }
 
+    // Copy folders in root
     myFrom=myFromRoot;
     myTo=myToRoot;
     items = await window.electron.getFoldersInFolder(myFrom);
+    let progressCount=Number(progressRef.current.split("%")[0]);
     for(i=0; i<items.length;i++){
       if(items[i]!=="assets"){
         myFrom=myFromRoot+PATH_DELIMTER+items[i];
         myTo=myToRoot+PATH_DELIMTER+items[i];
         result=await await window.electron.copyFolderSync(myFrom,myTo);
-        progressStep++;
-        setProgress(progressStep+"%");
+        progressStep(3);
       }
     }
-    //setProgress("20%");
-    //myTo=myTo+PATH_DELIMTER+"app-1.0.0";
-    //myFrom=myFrom+PATH_DELIMTER+"app-1.0.0"; 
-    //result=await await window.electron.copyFolderSync(myFrom,myTo);
-    //setProgress("30%");
-    //const result=await window.electron.copyFolderSync();
+
+    // empty folders in assets
+    myTo=myToRoot+PATH_DELIMTER+"assets";
+    result=await folderAdd(myTo);
+    result=await folderAdd(myTo+PATH_DELIMTER+"Workday");
+    result=await folderAdd(myTo+PATH_DELIMTER+"_Photos");
+    myTo=myTo+PATH_DELIMTER+"Meetings";
+    result=await folderAdd(myTo);
+    result=await folderAdd(myTo+PATH_DELIMTER+"PDFs");
+    result=await folderAdd(myTo+PATH_DELIMTER+"Save Files"); 
     
+    // copy files in _Photos
+    myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
+    myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
+    items = await window.electron.getFilesInFolder(myFrom);
+    let progressCurrent=Number(progressRef.current.split("%")[0]);
+    progressCurrent=(100-progressCurrent)/items.length;
+
+    for(i=0; i<items.length;i++){
+      myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
+      myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
+      console.log("***** myTo="+myTo);
+      result=await await window.electron.copyFileSync(myFrom,myTo);
+      progressStep(progressCurrent);
+    }
+
     // finish up
     browseBtn.classList.add("button");
     browseBtn.classList.remove("disable");
-    document.getElementById("browse-btn").style.display="block";
+    event.target.style.display="block";
   }
 
   const updateOrInstall=()=>{
