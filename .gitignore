@@ -92,4 +92,4 @@ typings/
 out/
 
 # Application
-files-to-copy/
+copyFolderSync/

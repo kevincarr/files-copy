@@ -37,12 +37,12 @@ function App() {
 
       myFrom=myFrom.slice(0, -1);
     }
-    myFrom=myFrom+"\\files-to-copy";
+    myFrom=myFrom+"\\copyFolderSync";
 
     if(myTo.slice(-1)==="\\"){
       myTo=myTo.slice(0, -1);
     }
-    myTo=myTo+"\\files-to-copy";
+    myTo=myTo+"\\copyFolderSync";
     
     console.log("***** myFrom="+myFrom);
     console.log("***** myTo"+myTo);
