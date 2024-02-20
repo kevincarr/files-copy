@@ -14,10 +14,13 @@ function App() {
     const result=await window.electron.folderPathsGet();
     setpaths(result);
   }
-  const dirPathGet = async function() {  
-    const result=await window.electron.directorySelect();
-    if(result){
-      setpaths(result);
+  const dirPathGet = async function() { 
+    const browseBtn = document.getElementById("browse-btn");
+    if(browseBtn.classList.contains("button")){
+      const result=await window.electron.directorySelect();
+      if(result){
+        setpaths(result);
+      }
     }
   }
 
@@ -66,32 +69,62 @@ function App() {
     //const result=await window.electron.copyFolderSync();
   }
   
-  const filesInstall = async function(){
+  const filesInstall = async function(event){
+    event.target.style.display='none';
+    const browseBtn = document.getElementById("browse-btn");
+    browseBtn.classList.add("disable");
+    browseBtn.classList.remove("button");
+    let progressStep=0;
+    let i=0;
     let myTo=pathRef.current[1];
     let myFrom=pathRef.current[0].split(".webpack")[0];
     if(myFrom.slice(-1)===PATH_DELIMTER){
-
       myFrom=myFrom.slice(0, -1);
     }
+
     myFrom=myFrom+PATH_DELIMTER+"copyFolderSync";
     const myFromRoot=myFrom;
-    console.log("***** myFromRoot="+myFromRoot);
-
     if(myTo.slice(-1)===PATH_DELIMTER){
       myTo=myTo.slice(0, -1);
     }
+
     const myToRoot=myTo;
-    console.log("***** myToRoot"+myToRoot);
-    //myTo=myTo+PATH_DELIMTER+"copyFolderSync";
-    //console.log("***** myTo"+myTo);
-    console.log("***** ***** ***** ***** *****");
     let result=await window.electron.makeFolderSync(myTo);
-    setProgress("10%");
-    myTo=myTo+PATH_DELIMTER+"app-1.0.0";
-    myFrom=myFrom+PATH_DELIMTER+"app-1.0.0"; 
-    result=await await window.electron.copyFolderSync(myFrom,myTo);
-    setProgress("20%");
+    progressStep++;
+    setProgress(progressStep+"%");
+
+    let items = await window.electron.getFilesInFolder(myFrom);
+    for(i=0; i<items.length;i++){
+      myFrom=myFromRoot+PATH_DELIMTER+items[i];
+      myTo=myToRoot+PATH_DELIMTER+items[i];
+      result=await await window.electron.copyFileSync(myFrom,myTo);
+      progressStep++;
+      setProgress(progressStep+"%");
+    }
+
+    myFrom=myFromRoot;
+    myTo=myToRoot;
+    items = await window.electron.getFoldersInFolder(myFrom);
+    for(i=0; i<items.length;i++){
+      if(items[i]!=="assets"){
+        myFrom=myFromRoot+PATH_DELIMTER+items[i];
+        myTo=myToRoot+PATH_DELIMTER+items[i];
+        result=await await window.electron.copyFolderSync(myFrom,myTo);
+        progressStep++;
+        setProgress(progressStep+"%");
+      }
+    }
+    //setProgress("20%");
+    //myTo=myTo+PATH_DELIMTER+"app-1.0.0";
+    //myFrom=myFrom+PATH_DELIMTER+"app-1.0.0"; 
+    //result=await await window.electron.copyFolderSync(myFrom,myTo);
+    //setProgress("30%");
     //const result=await window.electron.copyFolderSync();
+    
+    // finish up
+    browseBtn.classList.add("button");
+    browseBtn.classList.remove("disable");
+    document.getElementById("browse-btn").style.display="block";
   }
 
   const updateOrInstall=()=>{
@@ -100,7 +133,7 @@ function App() {
         Update 
       </div>);
     } else {
-      return(<div className="coral-button select-none install-btn" onClick={()=>filesInstall()}>
+      return(<div className="coral-button select-none install-btn" onClick={(event)=>filesInstall(event)}>
         Install 
       </div>);
     }
@@ -130,7 +163,7 @@ function App() {
       <div className="float-left">
         <div className="browse-container flex-container">
           <div id="location" className="result">{pathRef.current[1]}</div>
-          <div className="button" onClick={()=>dirPathGet()} >Browse</div>
+          <div id="browse-btn" className="select-none button" onClick={()=>dirPathGet()} >Browse</div>
         </div>
       </div>
       <div className="clear-both"></div>

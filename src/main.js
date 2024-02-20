@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import {
 	existsSync,
+	readdirSync,
   } from "fs";
 
 const path = require('path');
@@ -69,6 +70,17 @@ ipcMain.handle("onExit", () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
+ipcMain.handle("getFilesInFolder", async (e,folderPath) => {
+  return readdirSync(path.resolve(folderPath), { withFileTypes: true })
+    .filter((item) => item.isFile())
+    .map((item) => item.name);
+});
+ipcMain.handle("getFoldersInFolder", async (e,folderPath) => {
+  return readdirSync(path.resolve(folderPath), { withFileTypes: true })
+    .filter((item) => item.isDirectory())
+    .map((item) => item.name);
+});
+
 ipcMain.handle("folderPathsGet", () => {
   const homeDir = app.getPath('home');
   const desktopDir = path.resolve(homeDir, 'Desktop');
@@ -127,6 +139,16 @@ async function makeFolderSync(folder) {
 ipcMain.handle('makeFolderSync', async (event, folder) => {
   let result=await makeFolderSync(folder);
   return result;
+});
+
+async function copyFileSync(from, to) {
+  if (fs.lstatSync(path.join(from)).isFile()) {
+      fs.copyFileSync(path.join(from), path.join(to));
+  }
+}
+ipcMain.handle('copyFileSync', async (event, from, to) => {
+  copyFileSync(from,to);
+  return true;
 });
 
 async function copyFolderSync(from, to) {

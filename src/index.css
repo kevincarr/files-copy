@@ -61,24 +61,32 @@ body {
   border:1px solid #f36a52;
 }
 .browse-container div{
+  width: 650px;
   padding:5px;
   font-size: 17px;
 }
 .browse-container .button {
   background-color: #f36a52;
-  color:white;
+  color:#fff;
   cursor: pointer;
   width:15%;
   text-align: center;
   border-left: 1px solid #f36a52;
   transition-duration: 0.2s;
 }
-.browse-container .button:hover{ 
+.browse-container .disable {
+  background-color: #fff;
+  color:#fff;
+  width:15%;
+  border-left: 1px solid #fff;
+  transition-duration: 0.2s;
+  cursor: text;
+}
+.browse-container .button:hover{
   background-color: white;
   color: #f36a52;
 }
 .browse-container .result {
-  width: 650px;
   text-align: left;
   padding-right:10px;
   background: #fff;
