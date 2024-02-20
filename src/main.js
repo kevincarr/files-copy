@@ -62,6 +62,10 @@ app.on('activate', () => {
   }
 });
 
+ipcMain.handle("onExit", () => {
+  app.quit();
+});
+
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
@@ -114,10 +118,19 @@ ipcMain.handle('directorySelect', async (pathArray) => {
   }
 });
 
-function copyFolderSync(from, to) {
-  if (!existsSync(to)) {
-    fs.mkdirSync(to);
+async function makeFolderSync(folder) {
+  if (!existsSync(folder)) {
+    fs.mkdirSync(folder);
   }
+  return true;
+};
+ipcMain.handle('makeFolderSync', async (event, folder) => {
+  let result=await makeFolderSync(folder);
+  return result;
+});
+
+async function copyFolderSync(from, to) {
+  let result=await makeFolderSync(to);
   fs.readdirSync(from).forEach((element) => {
       if (fs.lstatSync(path.join(from, element)).isFile()) {
           fs.copyFileSync(path.join(from, element), path.join(to, element));
@@ -128,4 +141,5 @@ function copyFolderSync(from, to) {
 }
 ipcMain.handle('copyFolderSync', async (event, from, to) => {
   copyFolderSync(from,to);
+  return true;
 });

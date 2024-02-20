@@ -17,6 +17,9 @@ body {
 .bg-abt-gray{
   background-color: #d9d9d7;
 }
+.bg-abt-blue{
+  background-color: #52c0e6;
+}
 .text-white{
   color: #ffffff;
 }
@@ -49,6 +52,9 @@ body {
 .float-left{
   float: left;
 }
+.clear-both{
+  clear: both;
+}
 .browse-container{
   width:100%;
   border-radius: 8px;
@@ -65,6 +71,7 @@ body {
   width:15%;
   text-align: center;
   border-left: 1px solid #f36a52;
+  transition-duration: 0.2s;
 }
 .browse-container .button:hover{ 
   background-color: white;
@@ -92,11 +99,25 @@ body {
 }
 .install-btn{
   position: absolute;
-  right:    140px;
+  right:    120px;
   bottom:   20px;
 }
 .cancel-btn{
   position: absolute;
   right:    20px;
   bottom:   20px;
+}
+.progress-container{
+  border:1px solid #001d34;
+  background-color: #49c7ed;
+  width: 735px;
+  height:25px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar{
+  background-color: #001d34;
+  height:25px;
+  transition-duration: 1s;
 }
