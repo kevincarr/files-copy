@@ -47,29 +47,6 @@ function App() {
     if (confirm(text) == true) {
       window.electron.onExit();
     }
-}
-  const filesUpdate = async function(){
-    let myTo=pathRef.current[1];
-    let myFrom=pathRef.current[0].split(".webpack")[0];
-    if(myFrom.slice(-1)==="\\"){
-
-      myFrom=myFrom.slice(0, -1);
-    }
-    myFrom=myFrom+PATH_DELIMTER+"copyFolderSync";
-    const myFromRoot=myFrom;
-
-    if(myTo.slice(-1)===PATH_DELIMTER){
-      myTo=myTo.slice(0, -1);
-    }
-    const myToRoot=myTo;
-    myTo=myTo+PATH_DELIMTER+"copyFolderSync";
-    
-    console.log("***** myFrom="+myFrom);
-    console.log("***** myTo"+myTo);
-    //let result=await window.electron.copyFolderSync(myFrom,myTo);
-    //setProgress("10%");
-
-    //const result=await window.electron.copyFolderSync();
   }
   const progressStep=(myStep)=>{
     let progressStep=Number(progressRef.current.split("%")[0]);
@@ -82,16 +59,12 @@ function App() {
     progressStep(1);
     return true;
   }
-  const filesInstall = async function(event){
-    setProgress("0%");
-    event.target.style.display='none';
+  const filesCopy = async function(){
     const browseBtn = document.getElementById("browse-btn");
     browseBtn.classList.add("disable");
     browseBtn.classList.remove("button");
     let i=0;
     let myTo=pathRef.current[1];
-    console.log("***** pathRef.current[0]="+pathRef.current[0]);
-    console.log("***** pathRef.current[1]="+pathRef.current[1]);
     let myFrom=pathRef.current[0].split(PATH_DELIMTER+".webpack")[0];
 
     myFrom=myFrom.split(PATH_DELIMTER+"app-"+packageJson.version)[0];
@@ -140,14 +113,36 @@ function App() {
     result=await folderAdd(myTo+PATH_DELIMTER+"PDFs");
     result=await folderAdd(myTo+PATH_DELIMTER+"Save Files"); 
     
-    // copy files in _Photos
+    /*
+    browseBtn.classList.add("button");
+    browseBtn.classList.remove("disable");
+    */
+  }
+
+  const filesInstall = async function(event){
+    event.target.style.display='none';
+    setProgress("0%");
+    let result = await filesCopy(event);
+
+    let myFrom=pathRef.current[0].split(PATH_DELIMTER+".webpack")[0];
+    myFrom=myFrom.split(PATH_DELIMTER+"app-"+packageJson.version)[0];
+    myFrom=myFrom+PATH_DELIMTER+"copyFolderSync";
+    const myFromRoot=myFrom;
+
+    let myTo=pathRef.current[1];
+    if(myTo.slice(-1)===PATH_DELIMTER){
+      myTo=myTo.slice(0, -1);
+    }
+    const myToRoot=myTo;
+
+        // copy files in _Photos
     myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
     myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
-    items = await window.electron.getFilesInFolder(myFrom);
+    const items = await window.electron.getFilesInFolder(myFrom);
     let progressCurrent=Number(progressRef.current.split("%")[0]);
     progressCurrent=(100-progressCurrent)/items.length;
 
-    for(i=0; i<items.length;i++){
+    for(let i=0; i<items.length;i++){
       myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
       myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
       result=await await window.electron.copyFileSync(myFrom,myTo);
@@ -159,12 +154,31 @@ function App() {
       alert("Copying completed successfully.");
       window.electron.onExit();
     }, 500);
-  
-    /*
-    browseBtn.classList.add("button");
-    browseBtn.classList.remove("disable");
-    event.target.style.display="block";
-    */
+    //event.target.style.display="block";
+  }
+
+    const filesUpdate = async function(){
+    let myTo=pathRef.current[1];
+    let myFrom=pathRef.current[0].split(".webpack")[0];
+    if(myFrom.slice(-1)==="\\"){
+
+      myFrom=myFrom.slice(0, -1);
+    }
+    myFrom=myFrom+PATH_DELIMTER+"copyFolderSync";
+    const myFromRoot=myFrom;
+
+    if(myTo.slice(-1)===PATH_DELIMTER){
+      myTo=myTo.slice(0, -1);
+    }
+    const myToRoot=myTo;
+    myTo=myTo+PATH_DELIMTER+"copyFolderSync";
+    
+    console.log("***** myFrom="+myFrom);
+    console.log("***** myTo"+myTo);
+    //let result=await window.electron.copyFolderSync(myFrom,myTo);
+    //setProgress("10%");
+
+    //const result=await window.electron.copyFolderSync();
   }
 
   const updateOrInstall=()=>{
