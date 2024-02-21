@@ -6,9 +6,7 @@
     - If port is busy see: `# Port 9000 issue/solution` (line 86-ish)
 
 ## Install application
-1. Run `npm install --legacy-peer-deps`
-   - This application was programmed in React 17
-   - If the application is already running after a pull, it is a good idea to stop and restart it.
+1. Run `npm install`
 
 ## Stopping the Application  
 1. Press `Ctrl` & `c` in the terminal  
@@ -57,6 +55,3 @@ The devServer.port is probably overwritten by electron-forge, and the values for
   }
 }
 ```
-
-## Force app refresh
-document.getElementById('refreshAll').click();
