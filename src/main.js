@@ -21,6 +21,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    icon: "src/icons/icon.ico",
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
@@ -37,7 +38,7 @@ const createWindow = () => {
   } else {
     //mainWindow.setFullScreen(true);
     // REMARK THIS OUT FOR LIVE APPLICATION
-    mainWindow.webContents.openDevTools({ mode: 'detach' });
+    //mainWindow.webContents.openDevTools({ mode: 'detach' });
   }
 };
 
