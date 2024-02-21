@@ -93,7 +93,6 @@ function App() {
     myFrom=myFromRoot;
     myTo=myToRoot;
     items = await window.electron.getFoldersInFolder(myFrom);
-    let progressCount=Number(progressRef.current.split("%")[0]);
     for(i=0; i<items.length;i++){
       if(items[i]!=="assets"){
         myFrom=myFromRoot+PATH_DELIMTER+items[i];
@@ -157,24 +156,36 @@ function App() {
     //event.target.style.display="block";
   }
 
-    const filesUpdate = async function(){
-    let myTo=pathRef.current[1];
-    let myFrom=pathRef.current[0].split(".webpack")[0];
-    if(myFrom.slice(-1)==="\\"){
+  const filesUpdate = async function(event){
+    event.target.style.display='none';
+    setProgress("0%");
 
-      myFrom=myFrom.slice(0, -1);
-    }
+    let myFrom=pathRef.current[0].split(PATH_DELIMTER+".webpack")[0];
+    myFrom=myFrom.split(PATH_DELIMTER+"app-"+packageJson.version)[0];
     myFrom=myFrom+PATH_DELIMTER+"copyFolderSync";
     const myFromRoot=myFrom;
 
+    let myTo=pathRef.current[1];
     if(myTo.slice(-1)===PATH_DELIMTER){
       myTo=myTo.slice(0, -1);
     }
-    const myToRoot=myTo;
-    myTo=myTo+PATH_DELIMTER+"copyFolderSync";
-    
-    console.log("***** myFrom="+myFrom);
-    console.log("***** myTo"+myTo);
+    const myToRoot=myTo;  
+
+    myTo=myToRoot;
+    let items = await window.electron.getFoldersInFolder(myTo);
+    let result=true;
+    for(let i=0; i<items.length;i++){
+      if(items[i].includes("app-")){
+        result=await await window.electron.deleteFolderSync(myTo+PATH_DELIMTER+items[i]);
+        progressStep(2);
+      }
+    }
+    myTo=myToRoot+PATH_DELIMTER+"packages";
+    result=await await window.electron.deleteFolderSync(myTo);
+    progressStep(2);
+
+
+
     //let result=await window.electron.copyFolderSync(myFrom,myTo);
     //setProgress("10%");
 
@@ -183,7 +194,7 @@ function App() {
 
   const updateOrInstall=()=>{
     if(pathRef.current[2]){
-      return(<div className="coral-button select-none install-btn" onClick={()=>filesUpdate()}>
+      return(<div className="coral-button select-none install-btn" onClick={(event)=>filesUpdate(event)}>
         Update 
       </div>);
     } else {

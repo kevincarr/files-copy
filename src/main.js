@@ -165,3 +165,21 @@ ipcMain.handle('copyFolderSync', async (event, from, to) => {
   copyFolderSync(from,to);
   return true;
 });
+
+async function deleteFolderSync(folder) {
+  let isCompelte=false;
+  if (existsSync(folder)) {
+    fs.rm(folder, { recursive: true, force: true }, err => {
+      if (err) {
+        throw err
+      } else {
+        isCompelte=true;
+      }
+    })
+  }
+  return isCompelte;
+};
+ipcMain.handle('deleteFolderSync', async (event, folder) => {
+  let result=await deleteFolderSync(folder);
+  return result;
+});
