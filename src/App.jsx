@@ -64,21 +64,17 @@ function App() {
     browseBtn.classList.add("disable");
     browseBtn.classList.remove("button");
     let i=0;
-    let myTo=pathRef.current[1];
-    let myFrom=pathRef.current[0].split(PATH_DELIMTER+".webpack")[0];
+    let result=false;
 
+    let myFrom=pathRef.current[0].split(PATH_DELIMTER+".webpack")[0];
     myFrom=myFrom.split(PATH_DELIMTER+"app-"+packageJson.version)[0];
-    
     myFrom=myFrom+PATH_DELIMTER+"copyFolderSync";
     const myFromRoot=myFrom;
+    let myTo=pathRef.current[1];
     if(myTo.slice(-1)===PATH_DELIMTER){
       myTo=myTo.slice(0, -1);
     }
-
-    // Create etmr folder
     const myToRoot=myTo;
-    let result=await window.electron.makeFolderSync(myToRoot);
-    progressStep(1);
 
     // copy files in root
     let items = await window.electron.getFilesInFolder(myFrom);
@@ -101,16 +97,6 @@ function App() {
         progressStep(3);
       }
     }
-
-    // empty folders in assets
-    myTo=myToRoot+PATH_DELIMTER+"assets";
-    result=await folderAdd(myTo);
-    result=await folderAdd(myTo+PATH_DELIMTER+"Workday");
-    result=await folderAdd(myTo+PATH_DELIMTER+"_Photos");
-    myTo=myTo+PATH_DELIMTER+"Meetings";
-    result=await folderAdd(myTo);
-    result=await folderAdd(myTo+PATH_DELIMTER+"PDFs");
-    result=await folderAdd(myTo+PATH_DELIMTER+"Save Files"); 
     
     /*
     browseBtn.classList.add("button");
@@ -121,7 +107,6 @@ function App() {
   const filesInstall = async function(event){
     event.target.style.display='none';
     setProgress("0%");
-    let result = await filesCopy(event);
 
     let myFrom=pathRef.current[0].split(PATH_DELIMTER+".webpack")[0];
     myFrom=myFrom.split(PATH_DELIMTER+"app-"+packageJson.version)[0];
@@ -133,6 +118,22 @@ function App() {
       myTo=myTo.slice(0, -1);
     }
     const myToRoot=myTo;
+
+    // Create etmr folder
+    let result=await window.electron.makeFolderSync(myToRoot);
+    progressStep(1);
+
+    result = await filesCopy(event);
+
+    // empty folders in assets
+    myTo=myToRoot+PATH_DELIMTER+"assets";
+    result=await folderAdd(myTo);
+    result=await folderAdd(myTo+PATH_DELIMTER+"Workday");
+    result=await folderAdd(myTo+PATH_DELIMTER+"_Photos");
+    myTo=myTo+PATH_DELIMTER+"Meetings";
+    result=await folderAdd(myTo);
+    result=await folderAdd(myTo+PATH_DELIMTER+"PDFs");
+    result=await folderAdd(myTo+PATH_DELIMTER+"Save Files"); 
 
         // copy files in _Photos
     myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
@@ -150,7 +151,7 @@ function App() {
 
     // finish up
     setTimeout(() => {
-      alert("Copying completed successfully.");
+      alert("Install completed successfully.");
       window.electron.onExit();
     }, 500);
     //event.target.style.display="block";
@@ -184,12 +185,23 @@ function App() {
     result=await await window.electron.deleteFolderSync(myTo);
     progressStep(2);
 
+    myTo=myToRoot+PATH_DELIMTER+"app.ico";
+    result=await await window.electron.deleteFolderSync(myTo);
+    progressStep(1);
 
+    myTo=myToRoot+PATH_DELIMTER+"ETMR Optimizer.exe";
+    result=await await window.electron.deleteFolderSync(myTo);
+    progressStep(1);
 
-    //let result=await window.electron.copyFolderSync(myFrom,myTo);
-    //setProgress("10%");
+    result = await filesCopy(event);
 
-    //const result=await window.electron.copyFolderSync();
+    setProgress("100%");
+
+    // finish up
+    setTimeout(() => {
+      alert("Update completed successfully.");
+      window.electron.onExit();
+    }, 500);
   }
 
   const updateOrInstall=()=>{
