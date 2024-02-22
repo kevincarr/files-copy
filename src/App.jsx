@@ -8,6 +8,8 @@ function App() {
   const pathRef = useRef();
   pathRef.current = paths;
   
+  const [information, setInformation] = useState(" ");
+
   const [progress, setProgress] = useState("0%");
   const progressRef = useRef();
   progressRef.current = progress;
@@ -81,8 +83,8 @@ function App() {
     for(i=0; i<items.length;i++){
       myFrom=myFromRoot+PATH_DELIMTER+items[i];
       myTo=myToRoot+PATH_DELIMTER+items[i];
-      result=await await window.electron.copyFileSync(myFrom,myTo);
-      progressStep(1);
+      result= await window.electron.copyFileSync(myFrom,myTo);
+      progressStep(3);
     }
 
     // Copy folders in root
@@ -93,8 +95,8 @@ function App() {
       if(items[i]!=="assets"){
         myFrom=myFromRoot+PATH_DELIMTER+items[i];
         myTo=myToRoot+PATH_DELIMTER+items[i];
-        result=await await window.electron.copyFolderSync(myFrom,myTo);
-        progressStep(3);
+        result= await window.electron.copyFolderSync(myFrom,myTo);
+        progressStep(6);
       }
     }
     
@@ -103,9 +105,10 @@ function App() {
     browseBtn.classList.remove("disable");
     */
   }
-
-  const filesInstall = async function(event){
+  const filesInstall = async function(event){ 
+    document.getElementById('all').classList.add("cursor-progress");
     event.target.style.display='none';
+    setInformation("Preparing files");
     setProgress("0%");
 
     let myFrom=pathRef.current[0].split(PATH_DELIMTER+".webpack")[0];
@@ -120,12 +123,15 @@ function App() {
     const myToRoot=myTo;
 
     // Create etmr folder
+    setInformation("Preparing your computer");
     let result=await window.electron.makeFolderSync(myToRoot);
     progressStep(1);
 
+    setInformation("Installing application files");
     result = await filesCopy(event);
 
     // empty folders in assets
+    setInformation("Creating user files and folders");
     myTo=myToRoot+PATH_DELIMTER+"assets";
     result=await folderAdd(myTo);
     result=await folderAdd(myTo+PATH_DELIMTER+"Workday");
@@ -136,6 +142,7 @@ function App() {
     result=await folderAdd(myTo+PATH_DELIMTER+"Save Files"); 
 
         // copy files in _Photos
+    setInformation("Copying employee photos. (this will take a few moments)");
     myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
     myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
     const items = await window.electron.getFilesInFolder(myFrom);
@@ -145,11 +152,14 @@ function App() {
     for(let i=0; i<items.length;i++){
       myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
       myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
-      result=await await window.electron.copyFileSync(myFrom,myTo);
+      result= await window.electron.copyFileSync(myFrom,myTo);
       progressStep(progressCurrent);
     }
 
     // finish up
+    document.getElementById('all').classList.remove("cursor-progress");
+    setProgress("100%");
+    setInformation("Finishing up");
     setTimeout(() => {
       alert("Install completed successfully.");
       window.electron.onExit();
@@ -158,7 +168,9 @@ function App() {
   }
 
   const filesUpdate = async function(event){
+    document.getElementById('all').classList.add("cursor-progress");
     event.target.style.display='none';
+    setInformation("Preparing files");
     setProgress("0%");
 
     let myFrom=pathRef.current[0].split(PATH_DELIMTER+".webpack")[0];
@@ -172,36 +184,43 @@ function App() {
     }
     const myToRoot=myTo;  
 
+    setInformation("Removing old application files");
     myTo=myToRoot;
     let items = await window.electron.getFoldersInFolder(myTo);
     let result=true;
     for(let i=0; i<items.length;i++){
       if(items[i].includes("app-")){
-        result=await await window.electron.deleteFolderSync(myTo+PATH_DELIMTER+items[i]);
+        result= await window.electron.deleteFolderSync(myTo+PATH_DELIMTER+items[i]);
         progressStep(2);
       }
     }
+    
     myTo=myToRoot+PATH_DELIMTER+"packages";
-    result=await await window.electron.deleteFolderSync(myTo);
+    result= await window.electron.deleteFolderSync(myTo);
     progressStep(2);
 
     myTo=myToRoot+PATH_DELIMTER+"app.ico";
-    result=await await window.electron.deleteFolderSync(myTo);
+    result= await window.electron.deleteFolderSync(myTo);
     progressStep(1);
 
     myTo=myToRoot+PATH_DELIMTER+"ETMR Optimizer.exe";
-    result=await await window.electron.deleteFolderSync(myTo);
-    progressStep(1);
+    result= await window.electron.deleteFolderSync(myTo);
+    progressStep(4);
 
-    result = await filesCopy(event);
+    // need to force a stop before copying the files
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
-    setProgress("100%");
+    setInformation("Installing application files");
+    result = await filesCopy();
 
     // finish up
+    document.getElementById('all').classList.remove("cursor-progress");
+    setProgress("100%");
     setTimeout(() => {
       alert("Update completed successfully.");
       window.electron.onExit();
     }, 500);
+
   }
 
   const updateOrInstall=()=>{
@@ -227,6 +246,7 @@ function App() {
   }
 
   return (<>
+  <div id="all" style={{height:"550px"}}>
     <div className="bg-abt-blue-dark text-white text-xs">
       <div className="container select-none">
       Update or Install the ETMR Optimizer
@@ -244,11 +264,14 @@ function App() {
         </div>
       </div>
       <div className="clear-both"></div>
+      <br/>
+      <div>{information}&nbsp;</div>
         {progressBar()}
         {updateOrInstall()}
         <div className="coral-button select-none cancel-btn" onClick={()=>confirmExit()}>
           Exit
         </div>
+    </div>
     </div>
   </>);
 }
