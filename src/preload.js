@@ -15,4 +15,5 @@ contextBridge.exposeInMainWorld("electron", {
     copyFileSync: (event,from,to) => ipcRenderer.invoke("copyFileSync",event,from,to),
     copyFolderSync: (event,from,to) => ipcRenderer.invoke("copyFolderSync",event,from,to),
     makeTextFile: (fileText, filePath) => ipcRenderer.invoke("makeTextFile", fileText, filePath),
+    readTextFile: (filePath) => ipcRenderer.invoke("readTextFile", filePath),
 });

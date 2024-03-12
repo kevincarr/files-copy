@@ -2,10 +2,13 @@ import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import {
 	existsSync,
 	readdirSync,
+  readFileSync,
   } from "fs";
 import { resolve } from "path";
 const path = require('path');
 const fs = require('fs');
+
+const TEXT_ENCODING = "latin1";
 
 app.commandLine.appendSwitch('--no-sandbox'); // This is to run an shared/mapped drives
 
@@ -212,4 +215,20 @@ async function makeTextFile(fileText, filePath){
 ipcMain.handle("makeTextFile", async (event, fileText, filePath) => {
   let result=await makeTextFile(fileText, filePath);
   return result;
+});
+
+const readText = (filePath) => {
+  let data="";
+  
+  if(filePath){
+      if (fs.existsSync(filePath)) {
+      //readFileSync(filePath);
+      data = fs.readFileSync(filePath,{encoding:TEXT_ENCODING, flag:'r'});
+    }
+  } 
+  return data;
+};
+
+ipcMain.handle("readTextFile", (event, filePath) => {
+  return readText(filePath);
 });

@@ -109,6 +109,11 @@ function App() {
     browseBtn.classList.remove("disable");
     */
   }
+  const getDateString=()=>{
+    const today = new Date();
+    let myDate=today.getFullYear()+"-"+String(today.getMonth() + 1).padStart(2, '0')+"-"+String(today.getDate()).padStart(2, '0');
+    return myDate;
+  }
   const filesInstall = async function(event){ 
     document.getElementById('all').classList.add("cursor-progress");
     event.target.style.display='none';
@@ -150,9 +155,7 @@ function App() {
     myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
     myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
     const myPhotoVersion=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
-    const today = new Date();
-    let myDate=today.getFullYear()+"-"+String(today.getMonth() + 1).padStart(2, '0')+"-"+String(today.getDate()).padStart(2, '0');
-    result= await window.electron.makeTextFile(myDate, myPhotoVersion);
+    result= await window.electron.makeTextFile(getDateString(), myPhotoVersion);
     const items = await window.electron.getFilesInFolder(myFrom);
     let progressCurrent=Number(progressRef.current.split("%")[0]);
     progressCurrent=(100-progressCurrent)/items.length;
@@ -220,6 +223,24 @@ function App() {
 
     setInformation("Installing application files");
     result = await filesCopy();
+
+    /* XXXXX PHOTOS XXXXX */
+    myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
+    items = await window.electron.getFilesInFolder(myFrom);
+    let progressCurrent=Number(progressRef.current.split("%")[0]);
+    progressCurrent=(100-progressCurrent)/items.length;
+    const myPhotoVersion=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
+    result= await window.electron.readTextFile(myPhotoVersion);
+    console.log("***** READ TEXT="+result);
+/*
+    for(let i=0; i<items.length;i++){
+      myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
+      myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
+      result= await window.electron.copyFileSync(myFrom,myTo);
+      progressStep(progressCurrent);
+    }
+*/ 
+    result= await window.electron.makeTextFile(getDateString(), myPhotoVersion);
 
     // finish up
     document.getElementById('all').classList.remove("cursor-progress");
