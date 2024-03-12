@@ -3,7 +3,7 @@ import {
 	existsSync,
 	readdirSync,
   } from "fs";
-
+import { resolve } from "path";
 const path = require('path');
 const fs = require('fs');
 
@@ -182,5 +182,34 @@ async function deleteFolderSync(folder) {
 };
 ipcMain.handle('deleteFolderSync', async (event, folder) => {
   let result=await deleteFolderSync(folder);
+  return result;
+});
+
+function WriteFile(fileText,filePath){
+  try {
+    const rawData = fileText;
+    const data = Buffer.from(rawData);
+    fs.writeFileSync(filePath, data, { flag: 'ax' });
+  } catch (e) {
+    console.log(e); // will log an error because file already exists
+  }
+}
+async function makeTextFile(fileText, filePath){
+  if (fs.existsSync(filePath)) {
+    fs.rm(filePath, { recursive: true, force: true }, err => {
+      if (err) {
+        //throw err
+      } else {
+        WriteFile(fileText,filePath);
+      }
+    })
+  } else {
+    WriteFile(fileText,filePath);
+  }
+  return filePath;
+};
+
+ipcMain.handle("makeTextFile", async (event, fileText, filePath) => {
+  let result=await makeTextFile(fileText, filePath);
   return result;
 });

@@ -33,6 +33,10 @@ function App() {
     returnPaths();
   }, []);
 
+  const onExit=()=>{
+    //window.electron.onExit();
+  }
+
   const PATH_DELIMTER="\\";
   const isInstalled=()=>{
     if(pathRef.current[2]){
@@ -141,10 +145,14 @@ function App() {
     result=await folderAdd(myTo+PATH_DELIMTER+"PDFs");
     result=await folderAdd(myTo+PATH_DELIMTER+"Save Files"); 
 
-        // copy files in _Photos
+    // copy files in _Photos
     setInformation("Copying employee photos. (this will take a few moments)");
     myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
     myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
+    const myPhotoVersion=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
+    const today = new Date();
+    let myDate=today.getFullYear()+"-"+String(today.getMonth() + 1).padStart(2, '0')+"-"+String(today.getDate()).padStart(2, '0');
+    result= await window.electron.makeTextFile(myDate, myPhotoVersion);
     const items = await window.electron.getFilesInFolder(myFrom);
     let progressCurrent=Number(progressRef.current.split("%")[0]);
     progressCurrent=(100-progressCurrent)/items.length;
@@ -157,12 +165,12 @@ function App() {
     }
 
     // finish up
-    document.getElementById('all').classList.remove("cursor-progress");
+    document.getElementById('all').classList.remove("cursor-progress"); 
     setProgress("100%");
     setInformation("Finishing up");
     setTimeout(() => {
       alert("Install completed successfully.");
-      window.electron.onExit();
+        onExit();
     }, 500);
     //event.target.style.display="block";
   }
@@ -207,7 +215,7 @@ function App() {
     result= await window.electron.deleteFolderSync(myTo);
     progressStep(4);
 
-    // need to force a stop before copying the files
+    // need to force a stop before copying the files 
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     setInformation("Installing application files");
@@ -218,18 +226,27 @@ function App() {
     setProgress("100%");
     setTimeout(() => {
       alert("Update completed successfully.");
-      window.electron.onExit();
+      onExit();
     }, 500);
 
   }
 
+  const startUpdating=(event)=>{
+    const result=returnPaths();
+    if(pathRef.current[2]){
+      filesUpdate(event)
+    } else {
+      filesInstall(event)
+    }
+  }
+
   const updateOrInstall=()=>{
     if(pathRef.current[2]){
-      return(<div className="coral-button select-none install-btn" onClick={(event)=>filesUpdate(event)}>
+      return(<div className="coral-button select-none install-btn" onClick={(event)=>startUpdating(event)}>
         Update 
       </div>);
     } else {
-      return(<div className="coral-button select-none install-btn" onClick={(event)=>filesInstall(event)}>
+      return(<div className="coral-button select-none install-btn" onClick={(event)=>startUpdating(event)}>
         Install 
       </div>);
     }
