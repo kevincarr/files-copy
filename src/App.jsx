@@ -34,7 +34,7 @@ function App() {
   }, []);
 
   const onExit=()=>{
-    //window.electron.onExit();
+    window.electron.onExit();
   }
 
   const PATH_DELIMTER="\\";
@@ -88,6 +88,7 @@ function App() {
       myFrom=myFromRoot+PATH_DELIMTER+items[i];
       myTo=myToRoot+PATH_DELIMTER+items[i];
       result= await window.electron.copyFileSync(myFrom,myTo);
+      setInformation("Copying "+items[i]+".");
       progressStep(3);
     }
 
@@ -100,14 +101,10 @@ function App() {
         myFrom=myFromRoot+PATH_DELIMTER+items[i];
         myTo=myToRoot+PATH_DELIMTER+items[i];
         result= await window.electron.copyFolderSync(myFrom,myTo);
+        setInformation("Copying "+items[i]+".");
         progressStep(6);
       }
     }
-    
-    /*
-    browseBtn.classList.add("button");
-    browseBtn.classList.remove("disable");
-    */
   }
   const getDateString=()=>{
     const today = new Date();
@@ -164,6 +161,7 @@ function App() {
       myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
       myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
       result= await window.electron.copyFileSync(myFrom,myTo);
+      setInformation("Copying "+items[i]+".");
       progressStep(progressCurrent);
     }
 
@@ -224,47 +222,47 @@ function App() {
     setInformation("Installing application files");
     result = await filesCopy();
 
-    /* XXXXX PHOTOS XXXXX */
-    myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
-    items = await window.electron.getFilesInFolder(myFrom);
-    let progressCurrent=Number(progressRef.current.split("%")[0]);
-    progressCurrent=(100-progressCurrent)/items.length;
+    // PHOTOS
+    setInformation("Checking for new photos");
+    progressStep(2);
     const myPhotoVersion=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
-    result= await window.electron.readTextFile(myPhotoVersion);
-    console.log("***** READ TEXT="+result);
-/*
-    for(let i=0; i<items.length;i++){
-      myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
-      myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
+    result=await window.electron.readTextFile(myPhotoVersion);
+    let myDate=result?Number(result.split("-").join("")):19700216; // if file doesn't exist set the date to 1970
+    result=await window.electron.getFilesNewInFolder(myDate,myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER);
+    let progressCurrent=Number(progressRef.current.split("%")[0]);
+    progressCurrent=(100-progressCurrent)/result.length;
+    for(let i=0; i<result.length;i++){
+      myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+result[i];
+      myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+result[i];
       result= await window.electron.copyFileSync(myFrom,myTo);
+      setInformation("Copying "+result[i]+".");
       progressStep(progressCurrent);
     }
-*/ 
+
+    // Update the version number
+    setInformation("Finishing up.");
     result=await window.electron.makeTextFile(getDateString(), myPhotoVersion);
-
-    
-    result=await window.electron.sortFilesInFolder(myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER);
-
-    
-    console.log("***** sorted="+result);
 
     // finish up
     document.getElementById('all').classList.remove("cursor-progress");
+    setInformation("Complete.");
     setProgress("100%");
     setTimeout(() => {
       alert("Update completed successfully.");
       onExit();
     }, 500);
-
   }
 
   const startUpdating=(event)=>{
     const result=returnPaths();
-    if(pathRef.current[2]){
-      filesUpdate(event)
-    } else {
-      filesInstall(event)
-    }
+    // wait 2 seconds for the program to udpate
+    setTimeout(() => {
+      if(pathRef.current[2]){
+        filesUpdate(event)
+      } else {
+        filesInstall(event)
+      }
+    }, 1000);
   }
 
   const updateOrInstall=()=>{
@@ -303,7 +301,7 @@ function App() {
       </div>
       <div className="float-left">
         <div className="browse-container flex-container">
-          <div id="location" className="result">{pathRef.current[1]}</div>
+          <div id="location" className="result select-none">{pathRef.current[1]}</div>
           <div id="browse-btn" className="select-none button" onClick={()=>dirPathGet()} >Browse</div>
         </div>
       </div>

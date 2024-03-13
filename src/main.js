@@ -74,33 +74,28 @@ ipcMain.handle("onExit", () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-ipcMain.handle("sortFilesInFolder", async (e,folderPath) => {
+ipcMain.handle("getFilesNewInFolder", async (e,date,folderPath) => {
   const directoryContent = fs.readdirSync(folderPath);
   let newFiles=[];
   let files = directoryContent.filter((filename) => {
-
-    let fileDateArr=[];
-    let fileDate="";
-    fileDateArr=(fs.statSync(`${folderPath}/${filename}`).birthtime).split(" ");
-    // Thu Jul 29 2021 11:29:34 GMT-0500 (Central Daylight Time)
-    let month=( "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf("Jun") / 3 + 1 ).padStart(2, '0');
-    fileDate=fileDateArr[3]+month+fileDateArr[3];
-    console.log(filename+":"+fileDate+"<20240312="+(Number(fileDate)<Number(20240312)));
-  
-    return fs.statSync(`${folderPath}/${filename}`).isFile();
+    if(fs.statSync(`${folderPath}/${filename}`).isFile()){
+      let fileDateArr=[];
+      let fileDate="";
+      fileDateArr=(fs.statSync(`${folderPath}/${filename}`).birthtime).toString().split(" ");
+      // Thu Jul 29 2021 11:29:34 GMT-0500 (Central Daylight Time)
+      let myString=( "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(fileDateArr[1]) / 3 + 1 ).toString();
+      myString=myString.length<2?"0"+myString:myString;
+      fileDate=fileDateArr[3]+myString;
+      myString=(Number(fileDateArr[2])+1).toString();
+      myString=myString.length<2?"0"+myString:myString;
+      fileDate=fileDate+myString;
+//console.log(filename+" "+(fs.statSync(`${folderPath}/${filename}`).birthtime).toString()+":"+fileDate+"<"+date+"="+(Number(fileDate)<date));
+      if(Number(fileDate)>date){
+        newFiles.push(filename);
+      }
+    }
   });
-
-/*
-  let sorted = files.sort((a, b) => {
-    let aStat = fs.statSync(`${folderPath}/${a}`),
-        bStat = fs.statSync(`${folderPath}/${b}`);
-    
-    return new Date(bStat.birthtime).getTime() - new Date(aStat.birthtime).getTime();
-  });
-
-  return sorted;
-  */
-
+  return newFiles;
 });
 
 ipcMain.handle("getFilesInFolder", async (e,folderPath) => {
