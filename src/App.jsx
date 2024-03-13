@@ -38,6 +38,13 @@ function App() {
   }
 
   const PATH_DELIMTER="\\";
+
+  const fromRootGet=()=>{
+    let myFrom=pathRef.current[0].split(PATH_DELIMTER+"1-ETMR Optimizer")[0];
+    myFrom=myFrom+PATH_DELIMTER+"1-ETMR Optimizer";
+    myFrom=myFrom+PATH_DELIMTER+"etmr-optimizer";
+    return myFrom;
+  }
   const isInstalled=()=>{
     if(pathRef.current[2]){
       return(<>
@@ -72,34 +79,33 @@ function App() {
     let i=0;
     let result=false;
 
-    let myFrom=pathRef.current[0].split(PATH_DELIMTER+".webpack")[0];
-    myFrom=myFrom.split(PATH_DELIMTER+"app-"+packageJson.version)[0];
-    myFrom=myFrom+PATH_DELIMTER+"copyFolderSync";
-    const myFromRoot=myFrom;
+    let myFrom=fromRootGet();
+    const FROM_ROOT= myFrom;
+
     let myTo=pathRef.current[1];
     if(myTo.slice(-1)===PATH_DELIMTER){
       myTo=myTo.slice(0, -1);
     }
-    const myToRoot=myTo;
+    const TO_ROOT=myTo;
 
     // copy files in root
     let items = await window.electron.getFilesInFolder(myFrom);
     for(i=0; i<items.length;i++){
-      myFrom=myFromRoot+PATH_DELIMTER+items[i];
-      myTo=myToRoot+PATH_DELIMTER+items[i];
+      myFrom=FROM_ROOT+PATH_DELIMTER+items[i];
+      myTo=TO_ROOT+PATH_DELIMTER+items[i];
       result= await window.electron.copyFileSync(myFrom,myTo);
       setInformation("Copying "+items[i]+".");
       progressStep(3);
     }
 
     // Copy folders in root
-    myFrom=myFromRoot;
-    myTo=myToRoot;
+    myFrom=FROM_ROOT;
+    myTo=TO_ROOT;
     items = await window.electron.getFoldersInFolder(myFrom);
     for(i=0; i<items.length;i++){
       if(items[i]!=="assets"){
-        myFrom=myFromRoot+PATH_DELIMTER+items[i];
-        myTo=myToRoot+PATH_DELIMTER+items[i];
+        myFrom=FROM_ROOT+PATH_DELIMTER+items[i];
+        myTo=TO_ROOT+PATH_DELIMTER+items[i];
         result= await window.electron.copyFolderSync(myFrom,myTo);
         setInformation("Copying "+items[i]+".");
         progressStep(6);
@@ -117,20 +123,18 @@ function App() {
     setInformation("Preparing files");
     setProgress("0%");
 
-    let myFrom=pathRef.current[0].split(PATH_DELIMTER+".webpack")[0];
-    myFrom=myFrom.split(PATH_DELIMTER+"app-"+packageJson.version)[0];
-    myFrom=myFrom+PATH_DELIMTER+"copyFolderSync";
-    const myFromRoot=myFrom;
+    let myFrom=fromRootGet();
+    const FROM_ROOT= myFrom;
 
     let myTo=pathRef.current[1];
     if(myTo.slice(-1)===PATH_DELIMTER){
       myTo=myTo.slice(0, -1);
     }
-    const myToRoot=myTo;
+    const TO_ROOT=myTo;
 
     // Create etmr folder
     setInformation("Preparing your computer");
-    let result=await window.electron.makeFolderSync(myToRoot);
+    let result=await window.electron.makeFolderSync(TO_ROOT);
     progressStep(1);
 
     setInformation("Installing application files");
@@ -138,7 +142,7 @@ function App() {
 
     // empty folders in assets
     setInformation("Creating user files and folders");
-    myTo=myToRoot+PATH_DELIMTER+"assets";
+    myTo=TO_ROOT+PATH_DELIMTER+"assets";
     result=await folderAdd(myTo);
     result=await folderAdd(myTo+PATH_DELIMTER+"Workday");
     result=await folderAdd(myTo+PATH_DELIMTER+"_Photos");
@@ -149,17 +153,17 @@ function App() {
 
     // copy files in _Photos
     setInformation("Copying employee photos. (this will take a few moments)");
-    myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
-    myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
-    const myPhotoVersion=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
-    result= await window.electron.makeTextFile(getDateString(), myPhotoVersion);
+    myFrom=FROM_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
+    myTo=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
+    const myPhotoVersion=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
+    result= await window.electron.makeTextFile(getDateString()+"\n"+FROM_ROOT, myPhotoVersion);
     const items = await window.electron.getFilesInFolder(myFrom);
     let progressCurrent=Number(progressRef.current.split("%")[0]);
     progressCurrent=(100-progressCurrent)/items.length;
 
     for(let i=0; i<items.length;i++){
-      myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
-      myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
+      myFrom=FROM_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
+      myTo=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
       result= await window.electron.copyFileSync(myFrom,myTo);
       setInformation("Copying "+items[i]+".");
       progressStep(progressCurrent);
@@ -183,20 +187,18 @@ function App() {
     setInformation("Preparing files");
     setProgress("0%");
 
-    let myFrom=pathRef.current[0].split(PATH_DELIMTER+".webpack")[0];
-    myFrom=myFrom.split(PATH_DELIMTER+"app-"+packageJson.version)[0];
-    myFrom=myFrom+PATH_DELIMTER+"copyFolderSync";
-    const myFromRoot=myFrom;
+    let myFrom=fromRootGet();
+    const FROM_ROOT= myFrom;
 
     let myTo=pathRef.current[1];
     if(myTo.slice(-1)===PATH_DELIMTER){
       myTo=myTo.slice(0, -1);
     }
-    const myToRoot=myTo;  
+    const TO_ROOT=myTo;  
 
     setInformation("Checking application files");
-    let itemsOld = await window.electron.getFoldersInFolder(myToRoot);
-    let itemsNew = await window.electron.getFoldersInFolder(myFromRoot);
+    let itemsOld = await window.electron.getFoldersInFolder(TO_ROOT);
+    let itemsNew = await window.electron.getFoldersInFolder(FROM_ROOT);
     let result=true;
     myTo="";
     for(i=0; i<itemsOld.length;i++){
@@ -218,20 +220,20 @@ function App() {
       result=true;
       for(i=0; i<itemsOld.length;i++){
         if(itemsOld[i].includes("app-")){
-          result=await window.electron.deleteFolderSync(myToRoot+PATH_DELIMTER+itemsOld[i]);
+          result=await window.electron.deleteFolderSync(TO_ROOT+PATH_DELIMTER+itemsOld[i]);
           progressStep(2);
         }
       }
       
-      myTo=myToRoot+PATH_DELIMTER+"packages";
+      myTo=TO_ROOT+PATH_DELIMTER+"packages";
       result= await window.electron.deleteFolderSync(myTo);
       progressStep(2);
   
-      myTo=myToRoot+PATH_DELIMTER+"app.ico";
+      myTo=TO_ROOT+PATH_DELIMTER+"app.ico";
       result= await window.electron.deleteFolderSync(myTo);
       progressStep(1);
   
-      myTo=myToRoot+PATH_DELIMTER+"ETMR Optimizer.exe";
+      myTo=TO_ROOT+PATH_DELIMTER+"ETMR Optimizer.exe";
       result= await window.electron.deleteFolderSync(myTo);
       progressStep(4);
   
@@ -242,18 +244,19 @@ function App() {
       result = await filesCopy();
     }
 
-    // PHOTOS
+    // PHOTOS 
     setInformation("Checking for new photos");
     progressStep(2);
-    const myPhotoVersion=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
+    const myPhotoVersion=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
     result=await window.electron.readTextFile(myPhotoVersion);
+    result=result?result.toString().split("\n")[0]:false;
     let myDate=result?Number(result.split("-").join("")):19700216; // if file doesn't exist set the date to 1970
-    result=await window.electron.getFilesNewInFolder(myDate,myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER);
+    result=await window.electron.getFilesNewInFolder(myDate,FROM_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER);
     let progressCurrent=Number(progressRef.current.split("%")[0]);
     progressCurrent=(100-progressCurrent)/result.length;
     for(i=0; i<result.length;i++){
-      myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+result[i];
-      myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+result[i];
+      myFrom=FROM_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+result[i];
+      myTo=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+result[i];
       result= await window.electron.copyFileSync(myFrom,myTo);
       setInformation("Copying "+result[i]+".");
       progressStep(progressCurrent);
@@ -261,7 +264,7 @@ function App() {
 
     // Update the version number
     setInformation("Finishing up.");
-    result=await window.electron.makeTextFile(getDateString(), myPhotoVersion);
+    result= await window.electron.makeTextFile(getDateString()+"\n"+FROM_ROOT, myPhotoVersion);
 
     // finish up
     document.getElementById('all').classList.remove("cursor-progress");

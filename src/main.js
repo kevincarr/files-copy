@@ -89,7 +89,6 @@ ipcMain.handle("getFilesNewInFolder", async (e,date,folderPath) => {
       myString=(Number(fileDateArr[2])+1).toString();
       myString=myString.length<2?"0"+myString:myString;
       fileDate=fileDate+myString;
-//console.log(filename+" "+(fs.statSync(`${folderPath}/${filename}`).birthtime).toString()+":"+fileDate+"<"+date+"="+(Number(fileDate)<date));
       if(Number(fileDate)>date){
         newFiles.push(filename);
       }
