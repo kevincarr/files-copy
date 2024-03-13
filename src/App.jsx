@@ -278,7 +278,7 @@ function App() {
   }
   const progressBar=()=>{
     return(<>
-      <br/>
+      <br className="select-none"/>
       <div className="progress-container">
         <div className="progress-bar" style={{width:progressRef.current}}>
 
@@ -297,7 +297,7 @@ function App() {
     <div className="container text-base">
       {isInstalled()}
       <div className="select-none">
-      Select the location for the ETMR Optimizer
+        Select the location for the ETMR Optimizer
       </div>
       <div className="float-left">
         <div className="browse-container flex-container">
@@ -306,14 +306,14 @@ function App() {
         </div>
       </div>
       <div className="clear-both"></div>
-      <br/>
-      <div className="select-none">{information}&nbsp;</div>
-        {progressBar()}
-        {updateOrInstall()}
-        <div className="coral-button select-none cancel-btn" onClick={()=>confirmExit()}>
-          Exit
-        </div>
-    </div>
+        <br  className="select-none" />
+        <div className="select-none">{information}&nbsp;</div>
+          {progressBar()}
+          {updateOrInstall()}
+          <div className="coral-button select-none cancel-btn" onClick={()=>confirmExit()}>
+            Exit
+          </div>
+      </div>
     </div>
   </>);
 }
