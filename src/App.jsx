@@ -240,7 +240,13 @@ function App() {
       progressStep(progressCurrent);
     }
 */ 
-    result= await window.electron.makeTextFile(getDateString(), myPhotoVersion);
+    result=await window.electron.makeTextFile(getDateString(), myPhotoVersion);
+
+    
+    result=await window.electron.sortFilesInFolder(myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER);
+
+    
+    console.log("***** sorted="+result);
 
     // finish up
     document.getElementById('all').classList.remove("cursor-progress");

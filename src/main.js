@@ -74,6 +74,35 @@ ipcMain.handle("onExit", () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
+ipcMain.handle("sortFilesInFolder", async (e,folderPath) => {
+  const directoryContent = fs.readdirSync(folderPath);
+  let newFiles=[];
+  let files = directoryContent.filter((filename) => {
+
+    let fileDateArr=[];
+    let fileDate="";
+    fileDateArr=(fs.statSync(`${folderPath}/${filename}`).birthtime).split(" ");
+    // Thu Jul 29 2021 11:29:34 GMT-0500 (Central Daylight Time)
+    let month=( "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf("Jun") / 3 + 1 ).padStart(2, '0');
+    fileDate=fileDateArr[3]+month+fileDateArr[3];
+    console.log(filename+":"+fileDate+"<20240312="+(Number(fileDate)<Number(20240312)));
+  
+    return fs.statSync(`${folderPath}/${filename}`).isFile();
+  });
+
+/*
+  let sorted = files.sort((a, b) => {
+    let aStat = fs.statSync(`${folderPath}/${a}`),
+        bStat = fs.statSync(`${folderPath}/${b}`);
+    
+    return new Date(bStat.birthtime).getTime() - new Date(aStat.birthtime).getTime();
+  });
+
+  return sorted;
+  */
+
+});
+
 ipcMain.handle("getFilesInFolder", async (e,folderPath) => {
   return readdirSync(path.resolve(folderPath), { withFileTypes: true })
     .filter((item) => item.isFile())
@@ -222,7 +251,6 @@ const readText = (filePath) => {
   
   if(filePath){
       if (fs.existsSync(filePath)) {
-      //readFileSync(filePath);
       data = fs.readFileSync(filePath,{encoding:TEXT_ENCODING, flag:'r'});
     }
   } 
