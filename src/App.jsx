@@ -6,6 +6,7 @@ import packageJson from '../package.json';
 function App() {
   const [paths, setpaths] = useState([,,null]);
   const pathRef = useRef();
+  const PATH_DELIMTER="\\";
   pathRef.current = paths;
   
   const [information, setInformation] = useState(" ");
@@ -15,7 +16,11 @@ function App() {
   progressRef.current = progress;
 
   const returnPaths = async function() {
-    const result=await window.electron.folderPathsGet();
+    let result=await window.electron.folderPathsGet();
+    let myFrom=result[0].split(PATH_DELIMTER+"1-ETMR Optimizer")[0];
+    myFrom=myFrom+PATH_DELIMTER+"1-ETMR Optimizer";
+    myFrom=myFrom+PATH_DELIMTER+"etmr-optimizer";
+    result[0]=myFrom;
     setpaths(result);
   }
   const dirPathGet = async function() {
@@ -36,8 +41,6 @@ function App() {
   const onExit=()=>{
     window.electron.onExit();
   }
-
-  const PATH_DELIMTER="\\";
 
   const fromRootGet=()=>{
     let myFrom=pathRef.current[0].split(PATH_DELIMTER+"1-ETMR Optimizer")[0];
@@ -94,7 +97,7 @@ function App() {
       myFrom=FROM_ROOT+PATH_DELIMTER+items[i];
       myTo=TO_ROOT+PATH_DELIMTER+items[i];
       result= await window.electron.copyFileSync(myFrom,myTo);
-      setInformation("Copying "+items[i]+".");
+      setInformation("Installing "+items[i]+".");
       progressStep(3);
     }
 
@@ -107,7 +110,7 @@ function App() {
         myFrom=FROM_ROOT+PATH_DELIMTER+items[i];
         myTo=TO_ROOT+PATH_DELIMTER+items[i];
         result= await window.electron.copyFolderSync(myFrom,myTo);
-        setInformation("Copying "+items[i]+".");
+        setInformation("Installing "+items[i]+".");
         progressStep(6);
       }
     }
@@ -152,7 +155,7 @@ function App() {
     result=await folderAdd(myTo+PATH_DELIMTER+"Save Files"); 
 
     // copy files in _Photos
-    setInformation("Copying employee photos. (this will take a few moments)");
+    setInformation("Installing employee photos. (this will take a few moments)");
     myFrom=FROM_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
     myTo=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
     const myPhotoVersion=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
@@ -165,7 +168,7 @@ function App() {
       myFrom=FROM_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
       myTo=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+items[i];
       result= await window.electron.copyFileSync(myFrom,myTo);
-      setInformation("Copying "+items[i]+".");
+      setInformation("Installing "+items[i]+".");
       progressStep(progressCurrent);
     }
 
@@ -244,21 +247,21 @@ function App() {
       result = await filesCopy();
     }
 
-    // PHOTOS 
+    // NEW PHOTOS
     setInformation("Checking for new photos");
     progressStep(2);
     const myPhotoVersion=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
     result=await window.electron.readTextFile(myPhotoVersion);
     result=result?result.toString().split("\n")[0]:false;
     let myDate=result?Number(result.split("-").join("")):19700216; // if file doesn't exist set the date to 1970
-    result=await window.electron.getFilesNewInFolder(myDate,FROM_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER);
+    let photosNew=await window.electron.getFilesNewInFolder(myDate,FROM_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER);
     let progressCurrent=Number(progressRef.current.split("%")[0]);
-    progressCurrent=(100-progressCurrent)/result.length;
-    for(i=0; i<result.length;i++){
-      myFrom=FROM_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+result[i];
-      myTo=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+result[i];
+    progressCurrent=(100-progressCurrent)/progressCurrent.length;
+    for(i=0; i<photosNew.length;i++){
+      myFrom=FROM_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+photosNew[i];
+      myTo=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+photosNew[i];
       result= await window.electron.copyFileSync(myFrom,myTo);
-      setInformation("Copying "+result[i]+".");
+      setInformation("Installing "+photosNew[i]+".");
       progressStep(progressCurrent);
     }
 
