@@ -177,6 +177,7 @@ function App() {
   }
 
   const filesUpdate = async function(event){
+    let i=0;
     document.getElementById('all').classList.add("cursor-progress");
     event.target.style.display='none';
     setInformation("Preparing files");
@@ -193,34 +194,53 @@ function App() {
     }
     const myToRoot=myTo;  
 
-    setInformation("Removing old application files");
-    myTo=myToRoot;
-    let items = await window.electron.getFoldersInFolder(myTo);
+    setInformation("Checking application files");
+    let itemsOld = await window.electron.getFoldersInFolder(myToRoot);
+    let itemsNew = await window.electron.getFoldersInFolder(myFromRoot);
     let result=true;
-    for(let i=0; i<items.length;i++){
-      if(items[i].includes("app-")){
-        result= await window.electron.deleteFolderSync(myTo+PATH_DELIMTER+items[i]);
-        progressStep(2);
+    myTo="";
+    for(i=0; i<itemsOld.length;i++){
+      if(itemsOld[i].includes("app-")){
+        myTo=i;
+        break;
       }
+    } 
+    for(i=0; i<itemsNew.length;i++){
+      if(itemsOld[i].includes("app-")){
+        if(itemsOld[i]===itemsNew[i]){
+          result=false;
+          break;
+        }
+      }
+    } 
+    if(result){
+      setInformation("Removing old application files");
+      result=true;
+      for(i=0; i<itemsOld.length;i++){
+        if(itemsOld[i].includes("app-")){
+          result=await window.electron.deleteFolderSync(myTo+PATH_DELIMTER+itemsOld[i]);
+          progressStep(2);
+        }
+      }
+      
+      myTo=myToRoot+PATH_DELIMTER+"packages";
+      result= await window.electron.deleteFolderSync(myTo);
+      progressStep(2);
+  
+      myTo=myToRoot+PATH_DELIMTER+"app.ico";
+      result= await window.electron.deleteFolderSync(myTo);
+      progressStep(1);
+  
+      myTo=myToRoot+PATH_DELIMTER+"ETMR Optimizer.exe";
+      result= await window.electron.deleteFolderSync(myTo);
+      progressStep(4);
+  
+      // need to force a stop before copying the files 
+      await new Promise(resolve => setTimeout(resolve, 2000));
+  
+      setInformation("Installing application files");
+      result = await filesCopy();
     }
-    
-    myTo=myToRoot+PATH_DELIMTER+"packages";
-    result= await window.electron.deleteFolderSync(myTo);
-    progressStep(2);
-
-    myTo=myToRoot+PATH_DELIMTER+"app.ico";
-    result= await window.electron.deleteFolderSync(myTo);
-    progressStep(1);
-
-    myTo=myToRoot+PATH_DELIMTER+"ETMR Optimizer.exe";
-    result= await window.electron.deleteFolderSync(myTo);
-    progressStep(4);
-
-    // need to force a stop before copying the files 
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    setInformation("Installing application files");
-    result = await filesCopy();
 
     // PHOTOS
     setInformation("Checking for new photos");
@@ -231,7 +251,7 @@ function App() {
     result=await window.electron.getFilesNewInFolder(myDate,myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER);
     let progressCurrent=Number(progressRef.current.split("%")[0]);
     progressCurrent=(100-progressCurrent)/result.length;
-    for(let i=0; i<result.length;i++){
+    for(i=0; i<result.length;i++){
       myFrom=myFromRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+result[i];
       myTo=myToRoot+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+result[i];
       result= await window.electron.copyFileSync(myFrom,myTo);
