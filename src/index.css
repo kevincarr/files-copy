@@ -90,7 +90,6 @@ body {
   text-align: left;
   padding-right:10px;
   background: #fff;
-  cursor: text;
 }
 .coral-button{
   border-radius: 8px;
@@ -131,4 +130,7 @@ body {
 }
 .cursor-progress{
   cursor: progress;
+}
+.cursor-default{
+  cursor: default;
 }

@@ -41,7 +41,7 @@ function App() {
   const isInstalled=()=>{
     if(pathRef.current[2]){
       return(<>
-        <div>
+        <div className="select-none">
           An ETMR Optimizer has been detected, choose "Update" to update or fix this version.
         </div><br/>
       </>);
@@ -296,18 +296,18 @@ function App() {
     </div>
     <div className="container text-base">
       {isInstalled()}
-      <div>
+      <div className="select-none">
       Select the location for the ETMR Optimizer
       </div>
       <div className="float-left">
         <div className="browse-container flex-container">
-          <div id="location" className="result select-none">{pathRef.current[1]}</div>
+          <div id="location" className="result cursor-default">{pathRef.current[1]}</div>
           <div id="browse-btn" className="select-none button" onClick={()=>dirPathGet()} >Browse</div>
         </div>
       </div>
       <div className="clear-both"></div>
       <br/>
-      <div>{information}&nbsp;</div>
+      <div className="select-none">{information}&nbsp;</div>
         {progressBar()}
         {updateOrInstall()}
         <div className="coral-button select-none cancel-btn" onClick={()=>confirmExit()}>
