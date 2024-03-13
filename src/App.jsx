@@ -218,7 +218,7 @@ function App() {
       result=true;
       for(i=0; i<itemsOld.length;i++){
         if(itemsOld[i].includes("app-")){
-          result=await window.electron.deleteFolderSync(myTo+PATH_DELIMTER+itemsOld[i]);
+          result=await window.electron.deleteFolderSync(myToRoot+PATH_DELIMTER+itemsOld[i]);
           progressStep(2);
         }
       }
