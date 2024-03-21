@@ -1,6 +1,6 @@
 {
-  "name": "update-install",
-  "productName": "Update/Install",
+  "name": "install",
+  "productName": "Optimizer-Install",
   "version": "1.0.1",
   "description": "Copy current files",
   "main": ".webpack/main",
