@@ -1,8 +1,6 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 
-import packageJson from '../package.json';
-
 function App() {
   const [paths, setpaths] = useState([,,null]);
   const pathRef = useRef();
@@ -21,7 +19,7 @@ function App() {
     myFrom=myFrom+PATH_DELIMTER+"1-ETMR Optimizer";
     myFrom=myFrom+PATH_DELIMTER+"etmr-optimizer";
     result[0]=myFrom;
-    setpaths(result);
+    setpaths(result); 
   }
   const dirPathGet = async function() {
     setProgress("0%");
@@ -160,6 +158,10 @@ function App() {
     myTo=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
     const myPhotoVersion=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
     result= await window.electron.makeTextFile(getDateString()+"\n"+FROM_ROOT, myPhotoVersion);
+    
+    const myVersion=TO_ROOT+PATH_DELIMTER+"packages"+PATH_DELIMTER+"update"+PATH_DELIMTER+"_last-updated.txt";
+    result= await window.electron.makeTextFile(getDateString()+"\n"+FROM_ROOT, myVersion);
+
     const items = await window.electron.getFilesInFolder(myFrom);
     let progressCurrent=Number(progressRef.current.split("%")[0]);
     progressCurrent=(100-progressCurrent)/items.length;

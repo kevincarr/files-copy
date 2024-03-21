@@ -250,7 +250,3 @@ const readText = (filePath) => {
   } 
   return data;
 };
-
-ipcMain.handle("readTextFile", (event, filePath) => {
-  return readText(filePath);
-});
