@@ -219,7 +219,7 @@ function App() {
     if(myTo.slice(-1)===PATH_DELIMTER){
       myTo=myTo.slice(0, -1);
     }
-    const TO_ROOT=myTo;  
+    const TO_ROOT=myTo;
 
     setInformation("Checking application files");
     let itemsOld = await window.electron.getFoldersInFolder(TO_ROOT);
@@ -232,15 +232,7 @@ function App() {
         break;
       }
     } 
-    for(i=0; i<itemsNew.length;i++){
-      if(itemsOld[i].includes("app-")){
-        if(itemsOld[i]===itemsNew[i]){
-          result=false;
-          break;
-        }
-      }
-    } 
-    if(result){
+
       setInformation("Removing old application files");
       result=true;
       for(i=0; i<itemsOld.length;i++){
@@ -250,29 +242,28 @@ function App() {
         }
       }
       
-      myTo=TO_ROOT+PATH_DELIMTER+"packages";
-      result= await window.electron.deleteFolderSync(myTo);
-      progressStep(2);
-  
-      myTo=TO_ROOT+PATH_DELIMTER+"app.ico";
-      result= await window.electron.deleteFolderSync(myTo);
-      progressStep(1);
-  
-      myTo=TO_ROOT+PATH_DELIMTER+"ETMR Optimizer.exe";
-      result= await window.electron.deleteFolderSync(myTo);
-      progressStep(4);
-  
-      // need to force a stop before copying the files 
-      await new Promise(resolve => setTimeout(resolve, 2000));
-  
-      setInformation("Installing application files");
-      result = await filesCopy();
-    }
+    myTo=TO_ROOT+PATH_DELIMTER+"packages";
+    result= await window.electron.deleteFolderSync(myTo);
+    progressStep(2);
 
+    myTo=TO_ROOT+PATH_DELIMTER+"app.ico";
+    result= await window.electron.deleteFolderSync(myTo);
+    progressStep(1);
+
+    myTo=TO_ROOT+PATH_DELIMTER+"ETMR Optimizer.exe";
+    result= await window.electron.deleteFolderSync(myTo);
+    progressStep(4);
+
+    // need to force a stop before copying the files 
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    progressStep(40);
+    setInformation("Installing application files");
+    result = await filesCopy();
+   
     // NEW PHOTOS
+    /*
     setInformation("Checking for new photos");
     progressStep(2);
-    const myPhotoVersion=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
     result=await window.electron.readTextFile(myPhotoVersion);
     result=result?result.toString().split("\n")[0]:false;
     let myDate=result?Number(result.split("-").join("")):19700216; // if file doesn't exist set the date to 1970
@@ -286,10 +277,16 @@ function App() {
       setInformation("Installing "+photosNew[i]+".");
       progressStep(progressCurrent);
     }
+    */
 
     // Update the version number
+    progressStep(30);
     setInformation("Finishing up.");
+    const myPhotoVersion=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
     result= await window.electron.makeTextFile(getDateString()+"\n"+FROM_ROOT, myPhotoVersion);
+
+    const myVersion=TO_ROOT+PATH_DELIMTER+"packages"+PATH_DELIMTER+"update"+PATH_DELIMTER+"_last-updated.txt";
+    result= await window.electron.makeTextFile(getDateString()+"\n"+FROM_ROOT, myVersion);
 
     // finish up
     document.getElementById('all').classList.remove("cursor-progress");
