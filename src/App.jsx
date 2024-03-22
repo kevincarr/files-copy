@@ -99,7 +99,7 @@ function App() {
       myTo=TO_ROOT+PATH_DELIMTER+items[i];
       result= await window.electron.copyFileSync(myFrom,myTo);
       setInformation("Installing "+items[i]+".");
-      progressStep(3);
+      progressStep(10);
     }
     //result = await window.electron.renameFile(TO_ROOT+"ETMR Optimizer.exe",TO_ROOT+"ETMR Optimizer.txt");
 
@@ -168,7 +168,7 @@ function App() {
     myTo=TO_ROOT+PATH_DELIMTER+"packages";
     result=await folderAdd(myTo);
     result=await folderAdd(myTo+PATH_DELIMTER+"update");
-    progressStep(1);
+    progressStep(10);
 
     result = await filesCopy(event);
 
