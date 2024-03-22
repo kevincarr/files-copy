@@ -15,6 +15,9 @@
 1. Run `npm run make`
   - The builds will be created in the out folder
 
+## ASAR File issues (copying)
+[](https://www.electronjs.org/docs/latest/tutorial/asar-archives#treating-an-asar-archive-as-a-normal-file)
+
 ## Port Busy issue/solution
 ```
 [doc](https://js.electronforge.io/plugin/webpack/interfaces/webpackpluginconfig__;!!BBM_p3AAtQ!PF4kHC9a1dzqiNApB99LZA-Jo-mdKpR3Jb4o7OOKeIQCXdYA4IPwvqwE6cawOmWn6lj3qOMj8oVAl80JQjEtudc$)

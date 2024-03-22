@@ -171,7 +171,9 @@ ipcMain.handle('makeFolderSync', async (event, folder) => {
 
 async function copyFileSync(from, to) {
   if (fs.lstatSync(path.join(from)).isFile()) {
-      fs.copyFileSync(path.join(from), path.join(to));
+    //const originalFs = require('original-fs');
+    //originalFs.copyFileSync(path.join(from), path.join(to));
+    fs.copyFileSync(path.join(from), path.join(to));
   }
 }
 

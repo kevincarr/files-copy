@@ -43,7 +43,7 @@ function App() {
   const fromRootGet=()=>{
     let myFrom=pathRef.current[0].split(PATH_DELIMTER+"1-ETMR Optimizer")[0];
     myFrom=myFrom+PATH_DELIMTER+"1-ETMR Optimizer";
-    myFrom=myFrom+PATH_DELIMTER+"test2"+PATH_DELIMTER+"etmr-optimizer";
+    //myFrom=myFrom+PATH_DELIMTER+"test2"+PATH_DELIMTER+"etmr-optimizer";
     return myFrom;
   }
   const isInstalled=()=>{
@@ -114,7 +114,7 @@ function App() {
         progressStep(6);
       }
     }
-
+    // update version with asar file
     //let myBase=PATH_DELIMTER+"packages"+PATH_DELIMTER+"update";
     //result = await window.electron.copyFolderSync(FROM_ROOT+myBase,TO_ROOT+myBase);
     //progressStep(3);
