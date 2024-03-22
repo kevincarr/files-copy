@@ -17,7 +17,8 @@ function App() {
     let result=await window.electron.folderPathsGet();
     let myFrom=result[0].split(PATH_DELIMTER+"1-ETMR Optimizer")[0];
     myFrom=myFrom+PATH_DELIMTER+"1-ETMR Optimizer";
-    myFrom=myFrom+PATH_DELIMTER+"test2"+PATH_DELIMTER+"etmr-optimizer";
+    // ***** CHANGE IN fromRootGet ALSO *****
+    myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+"etmr-optimizer";
     result[0]=myFrom;
     setpaths(result); 
   }
@@ -43,7 +44,7 @@ function App() {
   const fromRootGet=()=>{
     let myFrom=pathRef.current[0].split(PATH_DELIMTER+"1-ETMR Optimizer")[0];
     myFrom=myFrom+PATH_DELIMTER+"1-ETMR Optimizer";
-    //myFrom=myFrom+PATH_DELIMTER+"test2"+PATH_DELIMTER+"etmr-optimizer";
+    myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+"etmr-optimizer";
     return myFrom;
   }
   const isInstalled=()=>{
@@ -170,7 +171,7 @@ function App() {
     result = await filesCopy(event);
 
     // copy files in _Photos
-    setInformation("Installing employee photos. (this will take a few moments)");
+    setInformation("Installing assets. (this will take a few moments)");
     myFrom=FROM_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
     myTo=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos";
     const myPhotoVersion=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
@@ -299,7 +300,7 @@ function App() {
   }
 
   const startUpdating=(event)=>{
-    const result=returnPaths();
+    // const result=returnPaths();
     // wait 2 seconds for the program to udpate
     setTimeout(() => {
       if(pathRef.current[2]){

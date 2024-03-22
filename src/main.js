@@ -3,7 +3,6 @@ import {
 	existsSync,
 	readdirSync,
   readFileSync,
-  rename,
   } from "fs";
 import { resolve } from "path";
 const path = require('path');
