@@ -17,7 +17,7 @@ function App() {
     let result=await window.electron.folderPathsGet();
     let myFrom=result[0].split(PATH_DELIMTER+"1-ETMR Optimizer")[0];
     myFrom=myFrom+PATH_DELIMTER+"1-ETMR Optimizer";
-    myFrom=myFrom+PATH_DELIMTER+"etmr-optimizer";
+    myFrom=myFrom+PATH_DELIMTER+"test2"+PATH_DELIMTER+"etmr-optimizer";
     result[0]=myFrom;
     setpaths(result); 
   }
@@ -43,7 +43,7 @@ function App() {
   const fromRootGet=()=>{
     let myFrom=pathRef.current[0].split(PATH_DELIMTER+"1-ETMR Optimizer")[0];
     myFrom=myFrom+PATH_DELIMTER+"1-ETMR Optimizer";
-    myFrom=myFrom+PATH_DELIMTER+"etmr-optimizer";
+    myFrom=myFrom+PATH_DELIMTER+"test2"+PATH_DELIMTER+"etmr-optimizer";
     return myFrom;
   }
   const isInstalled=()=>{
@@ -98,13 +98,15 @@ function App() {
       setInformation("Installing "+items[i]+".");
       progressStep(3);
     }
+    //result = await window.electron.renameFile(TO_ROOT+"ETMR Optimizer.exe",TO_ROOT+"ETMR Optimizer.txt");
 
-    // Copy folders in root
+    // Copy App folder
     myFrom=FROM_ROOT;
     myTo=TO_ROOT;
     items = await window.electron.getFoldersInFolder(myFrom);
     for(i=0; i<items.length;i++){
       if(items[i]!=="assets"){
+        progressStep(3);
         myFrom=FROM_ROOT+PATH_DELIMTER+items[i];
         myTo=TO_ROOT+PATH_DELIMTER+items[i];
         result= await window.electron.copyFolderSync(myFrom,myTo);
@@ -112,6 +114,13 @@ function App() {
         progressStep(6);
       }
     }
+
+    //let myBase=PATH_DELIMTER+"packages"+PATH_DELIMTER+"update";
+    //result = await window.electron.copyFolderSync(FROM_ROOT+myBase,TO_ROOT+myBase);
+    //progressStep(3);
+    //result= await window.electron.deleteFolderSync(TO_ROOT+myBase+PATH_DELIMTER+"app-1.0.1"+PATH_DELIMTER+"resources"+PATH_DELIMTER+"app.asar");
+    //progressStep(3);
+    //result = await window.electron.renameFile(TO_ROOT+myBase+PATH_DELIMTER+"app-1.0.1"+PATH_DELIMTER+"resources"+PATH_DELIMTER+"app.asar.txt",TO_ROOT+myBase+PATH_DELIMTER+"app-1.0.1"+PATH_DELIMTER+"resources"+PATH_DELIMTER+"app.asar");
   }
   const getDateString=()=>{
     const today = new Date();
@@ -139,7 +148,6 @@ function App() {
     progressStep(1);
 
     setInformation("Installing application files");
-    result = await filesCopy(event);
 
     // empty folders in assets
     setInformation("Creating user files and folders");
@@ -150,7 +158,16 @@ function App() {
     myTo=myTo+PATH_DELIMTER+"Meetings";
     result=await folderAdd(myTo);
     result=await folderAdd(myTo+PATH_DELIMTER+"PDFs");
-    result=await folderAdd(myTo+PATH_DELIMTER+"Save Files"); 
+    result=await folderAdd(myTo+PATH_DELIMTER+"Save Files");
+    progressStep(1);
+    
+    // empty folders in packages
+    myTo=TO_ROOT+PATH_DELIMTER+"packages";
+    result=await folderAdd(myTo);
+    result=await folderAdd(myTo+PATH_DELIMTER+"update");
+    progressStep(1);
+
+    result = await filesCopy(event);
 
     // copy files in _Photos
     setInformation("Installing employee photos. (this will take a few moments)");

@@ -14,6 +14,7 @@ contextBridge.exposeInMainWorld("electron", {
     deleteFolderSync: (event,folder) => ipcRenderer.invoke("deleteFolderSync",event,folder),
     copyFileSync: (event,from,to) => ipcRenderer.invoke("copyFileSync",event,from,to),
     copyFolderSync: (event,from,to) => ipcRenderer.invoke("copyFolderSync",event,from,to),
+    renameFile: (event,from,to) => ipcRenderer.invoke("renameFile",event,from,to),
     getFilesNewInFolder: (event,date,folder) => ipcRenderer.invoke("getFilesNewInFolder",event,date,folder),
     makeTextFile: (fileText, filePath) => ipcRenderer.invoke("makeTextFile", fileText, filePath),
     readTextFile: (filePath) => ipcRenderer.invoke("readTextFile", filePath),

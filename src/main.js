@@ -3,6 +3,7 @@ import {
 	existsSync,
 	readdirSync,
   readFileSync,
+  rename,
   } from "fs";
 import { resolve } from "path";
 const path = require('path');
@@ -173,8 +174,14 @@ async function copyFileSync(from, to) {
       fs.copyFileSync(path.join(from), path.join(to));
   }
 }
+
 ipcMain.handle('copyFileSync', async (event, from, to) => {
   copyFileSync(from,to);
+  return true;
+});
+
+ipcMain.handle('renameFile', async (event, from, to) => {
+  fs.rename(from,to);
   return true;
 });
 
