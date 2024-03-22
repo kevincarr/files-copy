@@ -18,7 +18,8 @@ function App() {
     let myFrom=result[0].split(PATH_DELIMTER+"1-ETMR Optimizer")[0];
     myFrom=myFrom+PATH_DELIMTER+"1-ETMR Optimizer";
     // ***** CHANGE IN fromRootGet ALSO *****
-    myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+"etmr-optimizer";
+    //myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+"etmr-optimizer";
+    myFrom=myFrom+PATH_DELIMTER+"etmr-optimizer";
     result[0]=myFrom;
     setpaths(result); 
   }
@@ -44,7 +45,8 @@ function App() {
   const fromRootGet=()=>{
     let myFrom=pathRef.current[0].split(PATH_DELIMTER+"1-ETMR Optimizer")[0];
     myFrom=myFrom+PATH_DELIMTER+"1-ETMR Optimizer";
-    myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+"etmr-optimizer";
+    //myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+"etmr-optimizer";
+    myFrom=myFrom+PATH_DELIMTER+"etmr-optimizer";
     return myFrom;
   }
   const isInstalled=()=>{
