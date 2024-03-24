@@ -5,6 +5,8 @@ function App() {
   const [paths, setpaths] = useState([,,null]);
   const pathRef = useRef();
   const PATH_DELIMTER="\\";
+  const FOLDER_COPY="etmr-optimizer";
+  const FOLDER_SHARED="1-ETMR Optimizer";
   pathRef.current = paths;
   
   const [information, setInformation] = useState(" ");
@@ -15,11 +17,11 @@ function App() {
 
   const returnPaths = async function() {
     let result=await window.electron.folderPathsGet();
-    let myFrom=result[0].split(PATH_DELIMTER+"1-ETMR Optimizer")[0];
-    myFrom=myFrom+PATH_DELIMTER+"1-ETMR Optimizer";
+    let myFrom=result[0].split(PATH_DELIMTER+FOLDER_SHARED)[0];
+    myFrom=myFrom+PATH_DELIMTER+FOLDER_SHARED;
     // ***** CHANGE IN fromRootGet ALSO *****
-    //myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+"etmr-optimizer";
-    myFrom=myFrom+PATH_DELIMTER+"etmr-optimizer";
+    //myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+FOLDER_COPY;
+    myFrom=myFrom+PATH_DELIMTER+FOLDER_COPY;
     result[0]=myFrom;
     setpaths(result); 
   }
@@ -43,10 +45,10 @@ function App() {
   }
 
   const fromRootGet=()=>{
-    let myFrom=pathRef.current[0].split(PATH_DELIMTER+"1-ETMR Optimizer")[0];
-    myFrom=myFrom+PATH_DELIMTER+"1-ETMR Optimizer";
-    //myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+"etmr-optimizer";
-    myFrom=myFrom+PATH_DELIMTER+"etmr-optimizer";
+    let myFrom=pathRef.current[0].split(PATH_DELIMTER+FOLDER_SHARED)[0];
+    myFrom=myFrom+PATH_DELIMTER+FOLDER_SHARED;
+    //myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+FOLDER_COPY;
+    myFrom=myFrom+PATH_DELIMTER+FOLDER_COPY;
     return myFrom;
   }
   const isInstalled=()=>{
