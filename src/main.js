@@ -170,9 +170,13 @@ ipcMain.handle('makeFolderSync', async (event, folder) => {
 
 async function copyFileSync(from, to) {
   if (fs.lstatSync(path.join(from)).isFile()) {
+    if(from.slice(-5)===".asar"){
+      process.noAsar = true;
+    }
     //const originalFs = require('original-fs');
     //originalFs.copyFileSync(path.join(from), path.join(to));
     fs.copyFileSync(path.join(from), path.join(to));
+    process.noAsar = false;
   }
 }
 
@@ -189,11 +193,13 @@ ipcMain.handle('renameFile', async (event, from, to) => {
 async function copyFolderSync(from, to) {
   let result=await makeFolderSync(to);
   fs.readdirSync(from).forEach((element) => {
-      if (fs.lstatSync(path.join(from, element)).isFile()) {
-          fs.copyFileSync(path.join(from, element), path.join(to, element));
-      } else {
-          copyFolderSync(path.join(from, element), path.join(to, element));
-      }
+    process.noAsar = true;
+    if (fs.lstatSync(path.join(from, element)).isFile()) {
+        fs.copyFileSync(path.join(from, element), path.join(to, element));
+    } else {
+        copyFolderSync(path.join(from, element), path.join(to, element));
+    }
+    process.noAsar = false;
   });
 }
 ipcMain.handle('copyFolderSync', async (event, from, to) => {
