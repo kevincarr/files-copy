@@ -275,25 +275,6 @@ function App() {
     progressStep(40);
     setInformation("Installing application files");
     result = await filesCopy();
-   
-    // NEW PHOTOS
-    /*
-    setInformation("Checking for new photos");
-    progressStep(2);
-    result=await window.electron.readTextFile(myPhotoVersion);
-    result=result?result.toString().split("\n")[0]:false;
-    let myDate=result?Number(result.split("-").join("")):19700216; // if file doesn't exist set the date to 1970
-    let photosNew=await window.electron.getFilesNewInFolder(myDate,FROM_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER);
-    let progressCurrent=Number(progressRef.current.split("%")[0]);
-    progressCurrent=(100-progressCurrent)/progressCurrent.length;
-    for(i=0; i<photosNew.length;i++){
-      myFrom=FROM_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+photosNew[i];
-      myTo=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+photosNew[i];
-      result= await window.electron.copyFileSync(myFrom,myTo);
-      setInformation("Installing "+photosNew[i]+".");
-      progressStep(progressCurrent);
-    }
-    */
 
     // Update the version number
     progressStep(30);
