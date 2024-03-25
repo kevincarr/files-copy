@@ -5,6 +5,8 @@ function App() {
   const [paths, setpaths] = useState([,,null]);
   const pathRef = useRef();
   const PATH_DELIMTER="\\";
+  const FOLDER_COPY="etmr-optimizer";
+  const FOLDER_SHARED="1-ETMR Optimizer";
   pathRef.current = paths;
   
   const [information, setInformation] = useState(" ");
@@ -15,11 +17,11 @@ function App() {
 
   const returnPaths = async function() {
     let result=await window.electron.folderPathsGet();
-    let myFrom=result[0].split(PATH_DELIMTER+"1-ETMR Optimizer")[0];
-    myFrom=myFrom+PATH_DELIMTER+"1-ETMR Optimizer";
+    let myFrom=result[0].split(PATH_DELIMTER+FOLDER_SHARED)[0];
+    myFrom=myFrom+PATH_DELIMTER+FOLDER_SHARED;
     // ***** CHANGE IN fromRootGet ALSO *****
-    //myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+"etmr-optimizer";
-    myFrom=myFrom+PATH_DELIMTER+"etmr-optimizer";
+    //myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+FOLDER_COPY;
+    myFrom=myFrom+PATH_DELIMTER+FOLDER_COPY;
     result[0]=myFrom;
     setpaths(result); 
   }
@@ -43,10 +45,10 @@ function App() {
   }
 
   const fromRootGet=()=>{
-    let myFrom=pathRef.current[0].split(PATH_DELIMTER+"1-ETMR Optimizer")[0];
-    myFrom=myFrom+PATH_DELIMTER+"1-ETMR Optimizer";
-    //myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+"etmr-optimizer";
-    myFrom=myFrom+PATH_DELIMTER+"etmr-optimizer";
+    let myFrom=pathRef.current[0].split(PATH_DELIMTER+FOLDER_SHARED)[0];
+    myFrom=myFrom+PATH_DELIMTER+FOLDER_SHARED;
+    //myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+FOLDER_COPY;
+    myFrom=myFrom+PATH_DELIMTER+FOLDER_COPY;
     return myFrom;
   }
   const isInstalled=()=>{
@@ -118,6 +120,18 @@ function App() {
       }
     }
     // update version with asar file
+/*
+    setInformation("Installing update.");
+    progressStep(3);
+    myTo=TO_ROOT+PATH_DELIMTER+"app-1.0.2"+PATH_DELIMTER+"resources";
+    result = await window.electron.deleteFolderSync(myTo);
+    progressStep(3);
+    result = await window.electron.makeFolderSync(myTo);
+    progressStep(3);
+    myTo=myTo+PATH_DELIMTER+"app.asar";
+    result = await window.electron.copyFileSync(myTo);
+  */
+
     //let myBase=PATH_DELIMTER+"packages"+PATH_DELIMTER+"update";
     //result = await window.electron.copyFolderSync(FROM_ROOT+myBase,TO_ROOT+myBase);
     //progressStep(3);
@@ -170,6 +184,7 @@ function App() {
     result=await folderAdd(myTo+PATH_DELIMTER+"update");
     progressStep(10);
 
+    
     result = await filesCopy(event);
 
     // copy files in _Photos
@@ -194,13 +209,14 @@ function App() {
       progressStep(progressCurrent);
     }
 
+
     // finish up
     document.getElementById('all').classList.remove("cursor-progress"); 
     setProgress("100%");
     setInformation("Finishing up");
     setTimeout(() => {
       alert("Install completed successfully.");
-        onExit();
+        //onExit();
     }, 500);
     //event.target.style.display="block";
   }
