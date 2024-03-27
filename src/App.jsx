@@ -119,26 +119,7 @@ function App() {
         progressStep(6);
       }
     }
-    // update version with asar file
-/*
-    setInformation("Installing update.");
-    progressStep(3);
-    myTo=TO_ROOT+PATH_DELIMTER+"app-1.0.2"+PATH_DELIMTER+"resources";
-    result = await window.electron.deleteFolderSync(myTo);
-    progressStep(3);
-    result = await window.electron.makeFolderSync(myTo);
-    progressStep(3);
-    myTo=myTo+PATH_DELIMTER+"app.asar";
-    result = await window.electron.copyFileSync(myTo);
-  */
-
-    //let myBase=PATH_DELIMTER+"packages"+PATH_DELIMTER+"update";
-    //result = await window.electron.copyFolderSync(FROM_ROOT+myBase,TO_ROOT+myBase);
-    //progressStep(3);
-    //result= await window.electron.deleteFolderSync(TO_ROOT+myBase+PATH_DELIMTER+"app-1.0.1"+PATH_DELIMTER+"resources"+PATH_DELIMTER+"app.asar");
-    //progressStep(3);
-    //result = await window.electron.renameFile(TO_ROOT+myBase+PATH_DELIMTER+"app-1.0.1"+PATH_DELIMTER+"resources"+PATH_DELIMTER+"app.asar.txt",TO_ROOT+myBase+PATH_DELIMTER+"app-1.0.1"+PATH_DELIMTER+"resources"+PATH_DELIMTER+"app.asar");
-  }
+}
   const getDateString=()=>{
     const today = new Date();
     let myDate=today.getFullYear()+"-"+String(today.getMonth() + 1).padStart(2, '0')+"-"+String(today.getDate()).padStart(2, '0');

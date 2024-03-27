@@ -126,7 +126,7 @@ body {
 .progress-bar{
   background-color: #001d34;
   height:25px;
-  transition-duration: 1s;
+  transition-duration: 1.5s;
 }
 .cursor-progress{
   cursor: progress;
