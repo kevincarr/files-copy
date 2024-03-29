@@ -197,7 +197,7 @@ function App() {
     setInformation("Finishing up");
     setTimeout(() => {
       alert("Install completed successfully.");
-        //onExit();
+        onExit();
     }, 500);
     //event.target.style.display="block";
   }
