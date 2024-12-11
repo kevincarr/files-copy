@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, desktopCapturer } from 'electron';
 import {
 	existsSync,
 	readdirSync,
@@ -278,3 +278,18 @@ const readText = (filePath) => {
   } 
   return data;
 };
+
+ipcMain.handle("LookForApps", async () => {
+  //let myReturn=[];
+  const myReturn = JSON.stringify(BrowserWindow.getAllWindows().length);
+  /*
+  desktopCapturer.getSources({
+    types: ['window', 'screen']
+  }).then(sources => {
+    for (const thisSource of sources) {
+      myReturn.push(thisSource.name);
+    }
+  });
+  */
+  return myReturn;
+});

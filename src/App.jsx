@@ -6,7 +6,7 @@ function App() {
   const pathRef = useRef();
   const PATH_DELIMTER="\\";
   const FOLDER_COPY="etmr-optimizer";
-  const FOLDER_SHARED="1-ETMR Optimizer";
+  const FOLDER_SHARED="1-ETMR Optimizer"; // Z:"1-ETMR Optimizer" | Q:"ETMR Optimizer"
   pathRef.current = paths;
   
   const [information, setInformation] = useState(" ");
@@ -14,6 +14,13 @@ function App() {
   const [progress, setProgress] = useState("0%");
   const progressRef = useRef();
   progressRef.current = progress;
+
+  const returnApps = async function() {
+    console.log("***** returnApps()");
+    const result= await window.electron.LookForApps();
+    console.log("***** result="+result);
+  }
+  returnApps();
 
   const returnPaths = async function() {
     let result=await window.electron.folderPathsGet();

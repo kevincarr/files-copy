@@ -1,7 +1,7 @@
 {
   "name": "install",
   "productName": "Optimizer-Install",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Copy current files",
   "main": ".webpack/main",
   "scripts": {

@@ -18,4 +18,5 @@ contextBridge.exposeInMainWorld("electron", {
     getFilesNewInFolder: (event,date,folder) => ipcRenderer.invoke("getFilesNewInFolder",event,date,folder),
     makeTextFile: (fileText, filePath) => ipcRenderer.invoke("makeTextFile", fileText, filePath),
     readTextFile: (filePath) => ipcRenderer.invoke("readTextFile", filePath),
+    LookForApps: () => ipcRenderer.invoke("LookForApps"),
 });
