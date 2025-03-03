@@ -293,3 +293,14 @@ ipcMain.handle("LookForApps", async () => {
   */
   return myReturn;
 });
+
+ipcMain.handle("fileExists", async (event, filePath) => {
+  let data=false;
+  
+  if(filePath){
+      if (fs.existsSync(filePath)) {
+      data = true;
+    }
+  } 
+  return data;
+});
