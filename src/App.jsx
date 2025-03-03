@@ -16,9 +16,7 @@ function App() {
   progressRef.current = progress;
 
   const returnApps = async function() {
-    console.log("***** returnApps()");
     const result= await window.electron.LookForApps();
-    console.log("***** result="+result);
   }
   returnApps();
 
@@ -52,7 +50,11 @@ function App() {
   }
 
   const fromRootGet=()=>{
+    const IS_DEV = process.env.NODE_ENV === "development";
     let myFrom=pathRef.current[0].split(PATH_DELIMTER+FOLDER_SHARED)[0];
+    if(IS_DEV){
+      myFrom=myFrom.split("etmr-installer\\.webpack\\main")[0];
+    }
     myFrom=myFrom+PATH_DELIMTER+FOLDER_SHARED;
     //myFrom=myFrom+PATH_DELIMTER+"test"+PATH_DELIMTER+FOLDER_COPY;
     myFrom=myFrom+PATH_DELIMTER+FOLDER_COPY;
@@ -237,14 +239,14 @@ function App() {
       }
     } 
 
-      setInformation("Removing old application files");
-      result=true;
-      for(i=0; i<itemsOld.length;i++){
-        if(itemsOld[i].includes("app-")){
-          result=await window.electron.deleteFolderSync(TO_ROOT+PATH_DELIMTER+itemsOld[i]);
-          progressStep(2);
-        }
+    setInformation("Removing old application files");
+    result=true;
+    for(i=0; i<itemsOld.length;i++){
+      if(itemsOld[i].includes("app-")){
+        result=await window.electron.deleteFolderSync(TO_ROOT+PATH_DELIMTER+itemsOld[i]);
+        progressStep(2);
       }
+    }
       
     myTo=TO_ROOT+PATH_DELIMTER+"packages";
     result= await window.electron.deleteFolderSync(myTo);
@@ -258,29 +260,48 @@ function App() {
     result= await window.electron.deleteFolderSync(myTo);
     progressStep(4);
 
-    // need to force a stop before copying the files 
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    progressStep(40);
-    setInformation("Installing application files");
-    result = await filesCopy();
+    const checkPackage = async function(){
+      result=await window.electron.fileExists(TO_ROOT+PATH_DELIMTER+"packages");
+      if(!result){
+        clearInterval(checkPackage);
+        setInterval(checkPackage, 2000);
+        //TODO: Double check that these files were deleted before copying over the new files
 
-    // Update the version number
-    progressStep(30);
-    setInformation("Finishing up.");
-    const myPhotoVersion=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
-    result= await window.electron.makeTextFile(getDateString()+"\n"+FROM_ROOT, myPhotoVersion);
+        // need to force a stop before copying the files 
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        progressStep(40);
+        setInformation("Installing application files");
+        result = await filesCopy();
 
-    const myVersion=TO_ROOT+PATH_DELIMTER+"packages"+PATH_DELIMTER+"update"+PATH_DELIMTER+"_last-updated.txt";
-    result= await window.electron.makeTextFile(getDateString()+"\n"+FROM_ROOT, myVersion);
+        // Update the version number
+        progressStep(30);
+        setInformation("Finishing up.");
+        const myPhotoVersion=TO_ROOT+PATH_DELIMTER+"assets"+PATH_DELIMTER+"_Photos"+PATH_DELIMTER+"_last-updated.txt";
+        result= await window.electron.makeTextFile(getDateString()+"\n"+FROM_ROOT, myPhotoVersion);
 
-    // finish up
-    document.getElementById('all').classList.remove("cursor-progress");
-    setInformation("Complete.");
-    setProgress("100%");
-    setTimeout(() => {
-      alert("Update completed successfully.");
-      onExit();
-    }, 500);
+        const myVersion=TO_ROOT+PATH_DELIMTER+"packages"+PATH_DELIMTER+"update"+PATH_DELIMTER+"_last-updated.txt";
+        result= await window.electron.makeTextFile(getDateString()+"\n"+FROM_ROOT, myVersion);
+
+        // finish up
+        document.getElementById('all').classList.remove("cursor-progress");
+        setInformation("Complete.");
+        setProgress("100%");
+        setTimeout(() => {
+          alert("Update completed successfully.");
+          onExit();
+        }, 500);
+      }
+    }
+
+    const checkApp = async function(){
+      result=await window.electron.fileExists(TO_ROOT+PATH_DELIMTER+"packages");
+      if(!result){
+        clearInterval(checkApp);
+        setInterval(checkPackage, 2000);
+        //TODO: Double check that these files were deleted before copying over the new files
+      }
+    }
+    setInterval(checkApp, 2000);
   }
 
   const startUpdating=(event)=>{
